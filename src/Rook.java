@@ -1,7 +1,7 @@
 public class Rook extends Piece {
     @Override
-    protected void move(Position destination) {
-
+    protected boolean move(Position destination) {
+        return false;
     }
 
     @Override
