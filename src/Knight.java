@@ -1,7 +1,8 @@
 public class Knight extends Piece {
-    @Override
-    protected void move(Position destination) {
 
+    @Override
+    protected boolean move(Position destination) {
+        return false;
     }
 
     @Override
@@ -9,3 +10,11 @@ public class Knight extends Piece {
         return false;
     }
 }
+
+/*
+required to implement
+
+- moves like L
+- can pass through the pieces in L (jump)
+
+ */

@@ -1,4 +1,5 @@
 public class Bishop extends Piece {
+
     @Override
     protected boolean move(Position destination) {
         return false;
@@ -10,3 +11,10 @@ public class Bishop extends Piece {
     }
 
 }
+
+/*
+required to implement
+
+- move diagonally
+
+ */

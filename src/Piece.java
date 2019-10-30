@@ -11,14 +11,14 @@ public abstract class Piece {
      * String name:
      * The name of this object - not sure we need this...
      * There are several same pieces(ex. 8 Pawns) so how abt give them a name?
-     *
+     * <p>
      * String type:
      * Type of the piece, this will be assigned at the initialization
      * ex) Queen, Rook...
-     *
+     * <p>
      * boolean color:
      * White - true, black - false
-     *
+     * <p>
      * Position position:
      * Position of the piece, this will be assigned at the initialization with the starting point data.
      *
@@ -30,22 +30,15 @@ public abstract class Piece {
     protected Position position;
 
     // Methods
+
     /**
      * move the position of this piece - common method for the all pieces
      * this move method has no safety codes, so you must call isValidMove() for validity check
+     * if other player's piece is occupying the destination, your piece will capture
      *
      * @param newPosition the position that this piece will move
      */
-    protected boolean move(Position newPosition) {
-        boolean result = false;
-
-        if (isValidMove(newPosition)) {
-            this.position = newPosition;
-            result = true;
-        }
-
-        return result;
-    }
+    protected abstract boolean move(Position newPosition);
 
     /**
      * check the destination point is available to move
@@ -64,6 +57,7 @@ public abstract class Piece {
     }
 
     // Accessor
+
     /**
      * @return the piece's type
      */
@@ -92,11 +86,3 @@ public abstract class Piece {
 
 }
 
-/*
-
-If you have any brilliant idea to add on the code, plz share and let us know!
-
-1. Please make a branch of the source code to work efficiently (to prevent overwrite other's code)
-    You will know how to make a branch... See the readme.md file on your Java assignments.
-
- */
