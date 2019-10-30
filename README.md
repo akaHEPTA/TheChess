@@ -4,8 +4,6 @@ Group Project 01 - Java
 If you have any brilliant idea to add on the code, plz share and let us know!
 
 
-# TheChess
-
 ### Step 1: Clone this repository
 
 ### Step 2: Import the project
