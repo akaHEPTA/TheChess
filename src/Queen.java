@@ -32,4 +32,13 @@ public class Queen extends Piece {
         return result;
     }
 
+
+
 }
+
+/*
+required to implement
+
+- moves rook + bishop
+
+ */

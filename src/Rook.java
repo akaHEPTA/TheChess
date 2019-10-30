@@ -1,4 +1,5 @@
 public class Rook extends Piece {
+
     @Override
     protected boolean move(Position destination) {
         return false;
@@ -10,3 +11,11 @@ public class Rook extends Piece {
     }
 
 }
+
+/*
+required to implement
+
+- move horizontally or vertically
+- Castling (Special rule)
+
+ */

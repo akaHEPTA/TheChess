@@ -1,7 +1,8 @@
 public class Pawn extends Piece {
-    @Override
-    protected void move(Position destination) {
 
+    @Override
+    protected boolean move(Position destination) {
+        return false;
     }
 
     @Override
@@ -9,3 +10,13 @@ public class Pawn extends Piece {
         return false;
     }
 }
+
+/*
+required to implement
+
+- moves only one step forward
+- captures only a front diagonal step
+- gets promotion when it reached at the end (special rule)
+- En passant capture (special rule)
+
+ */
