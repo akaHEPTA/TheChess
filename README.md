@@ -12,3 +12,4 @@ If you have any brilliant idea to add on the code, plz share and let us know!
 
 ### Step 4: Commit and Push
 1. Please make a branch of the source code to work efficiently (to prevent overwrite other's code)
+2. Every function should be written on their own branch first, and it will be merged to master after the checking.
