@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public abstract class Piece {
     // Constants
     /**
@@ -26,8 +28,14 @@ public abstract class Piece {
      */
     protected String name;
     protected String type;
-    protected boolean color;
+    protected boolean isWhite;
     protected Position position;
+
+    protected Piece(String type, boolean isWhite, Position position) {
+        this.type = type;
+        this.isWhite = isWhite;
+        this.position = position;
+    }
 
     // Methods
 
@@ -36,7 +44,7 @@ public abstract class Piece {
      * this move method has no safety codes, so you must call isValidMove() for validity check
      * if other player's piece is occupying the destination, your piece will capture
      *
-     * @param newPosition the position that this piece will move
+     * @param newPosition is the position that this piece will move
      */
     protected abstract boolean move(Position newPosition);
 
@@ -50,11 +58,23 @@ public abstract class Piece {
     protected boolean isValidMove(Position newPosition) {
         boolean result = false;
 
-        if (newPosition.getRow() <= 0 && newPosition.getRow() <= 7 && newPosition.getCol() >= 0 && newPosition.getCol() <= 7)
+        if (newPosition.getRow() <= 0 && newPosition.getRow() <= 7
+                && newPosition.getCol() >= 0 && newPosition.getCol() <= 7)
             result = true;
 
         return result;
     }
+
+    /**
+     * Every piece should have their own overridden method that returns available move list
+     *
+     * @return ArrayList of available Position objects list
+     */
+    public abstract ArrayList<Position> getValidMoveList();
+
+    @Override
+    public abstract String toString();
+
 
     // Accessor
 

@@ -1,4 +1,11 @@
+import java.util.ArrayList;
+
 public class Pawn extends Piece {
+    // Constructor
+    public Pawn(String type, boolean isWhite, Position position) {
+        super(type, isWhite, position);
+    }
+
 
     @Override
     protected boolean move(Position destination) {
@@ -8,6 +15,20 @@ public class Pawn extends Piece {
     @Override
     protected boolean isValidMove(Position newPosition) {
         return false;
+    }
+
+    @Override
+    public ArrayList<Position> getValidMoveList() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return null;
+    }
+
+    protected void promotion(){
+
     }
 }
 

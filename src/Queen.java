@@ -1,9 +1,9 @@
+import java.util.ArrayList;
+
 public class Queen extends Piece {
 
-    public Queen(String type, boolean color) {
-        this.type = type;
-        this.color = color;
-        this.position = null; // this.START_POSITION[type];
+    public Queen(String type, boolean isWhite, Position position) {
+        super(type, isWhite, position);
     }
 
     @Override
@@ -32,6 +32,15 @@ public class Queen extends Piece {
         return result;
     }
 
+    @Override
+    public ArrayList<Position> getValidMoveList() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return null;
+    }
 
 
 }

@@ -27,3 +27,8 @@ hs_err_pid*
 out/*
 *.iml
 
+# Example screenshots
+chess_example_screenshots/*
+
+
+.DS_Store

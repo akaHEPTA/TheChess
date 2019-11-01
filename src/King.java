@@ -1,4 +1,11 @@
+import java.util.ArrayList;
+
 public class King extends Piece {
+
+    public King(String type, boolean isWhite, Position position) {
+        super(type, isWhite, position);
+    }
+
     @Override
     protected boolean move(Position destination) {
         return false;
@@ -7,6 +14,16 @@ public class King extends Piece {
     @Override
     protected boolean isValidMove(Position newPosition) {
         return false;
+    }
+
+    @Override
+    public ArrayList<Position> getValidMoveList() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return null;
     }
 }
 
