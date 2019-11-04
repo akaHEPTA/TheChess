@@ -16,17 +16,21 @@ public class InputCollector {
     }
 
     public String getLine() {
-        String temp;
+        String result;
         while (true) {
             try {
-                temp = myScan.nextLine().replaceAll("\\s", "");
-                if (temp.equals('\n')) throw new Exception();
-                else break;
+                String temp = myScan.nextLine().replaceAll("\\s", "");
+                if (temp.isEmpty()) throw new Exception("Empty input data");
+                else {
+                    result = temp;
+                    break;
+                }
             } catch (Exception e) {
-                System.out.println("[!] Invalid value");
+                System.out.println("[!] Invalid value : " + e.getMessage());
+                myScan = new Scanner(System.in);
             }
         }
-        return temp;
+        return result;
     }
 
 }

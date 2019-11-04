@@ -4,7 +4,7 @@ public class Display {
      * first index : 0 for white / 1 for black
      * second index : 0 for pawn / 1 for kight / 2 for bishop / 3 for rook / 4 for queen / 5 for king
      */
-    private static final char[][] SIMBOLS = {{'♙', '♘', '♗', '♖', '♕', '♔'}, {'♟', '♞', '♝', '♜', '♛', '♚'}};
+    private static final char[][] SYMBOLS = {{'♙', '♘', '♗', '♖', '♕', '♔'}, {'♟', '♞', '♝', '♜', '♛', '♚'}};
 
     // Constructor
     public Display() {
@@ -22,43 +22,43 @@ public class Display {
                 if (board[i][j] != null && board[i][j].isWhite) {
                     switch (board[i][j].type) {
                         case "Pawn":
-                            System.out.print(SIMBOLS[0][0] + "  ");
+                            System.out.print(SYMBOLS[0][0] + "  ");
                             break;
                         case "Knight":
-                            System.out.print(SIMBOLS[0][1] + "  ");
+                            System.out.print(SYMBOLS[0][1] + "  ");
                             break;
                         case "Bishop":
-                            System.out.print(SIMBOLS[0][2] + "  ");
+                            System.out.print(SYMBOLS[0][2] + "  ");
                             break;
                         case "Rook":
-                            System.out.print(SIMBOLS[0][3] + "  ");
+                            System.out.print(SYMBOLS[0][3] + "  ");
                             break;
                         case "Queen":
-                            System.out.print(SIMBOLS[0][4] + "  ");
+                            System.out.print(SYMBOLS[0][4] + "  ");
                             break;
                         case "King":
-                            System.out.print(SIMBOLS[0][5] + "  ");
+                            System.out.print(SYMBOLS[0][5] + "  ");
                             break;
                     }
                 } else if (board[i][j] != null && !board[i][j].isWhite) {
                     switch (board[i][j].type) {
                         case "Pawn":
-                            System.out.print(SIMBOLS[1][0] + "  ");
+                            System.out.print(SYMBOLS[1][0] + "  ");
                             break;
                         case "Knight":
-                            System.out.print(SIMBOLS[1][1] + "  ");
+                            System.out.print(SYMBOLS[1][1] + "  ");
                             break;
                         case "Bishop":
-                            System.out.print(SIMBOLS[1][2] + "  ");
+                            System.out.print(SYMBOLS[1][2] + "  ");
                             break;
                         case "Rook":
-                            System.out.print(SIMBOLS[1][3] + "  ");
+                            System.out.print(SYMBOLS[1][3] + "  ");
                             break;
                         case "Queen":
-                            System.out.print(SIMBOLS[1][4] + "  ");
+                            System.out.print(SYMBOLS[1][4] + "  ");
                             break;
                         case "King":
-                            System.out.print(SIMBOLS[1][5] + "  ");
+                            System.out.print(SYMBOLS[1][5] + "  ");
                             break;
                     }
                 } else {
@@ -92,8 +92,9 @@ public class Display {
         System.out.println();
     }
 
-    public void printResign() {
+    public void printResign(boolean isWhiteTurn) {
         /* not finished */
+        System.out.println((isWhiteTurn ? "White" : "Black") + " resigned. Game over.");
     }
 
     public void printMove() {
@@ -107,7 +108,7 @@ public class Display {
     public void printUCI() {
     }
 
-    public void printNewLine(){
+    public void printNewLine() {
         System.out.println();
     }
 }

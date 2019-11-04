@@ -10,10 +10,6 @@ public abstract class Piece {
 
     // Fields
     /**
-     * String name:
-     * The name of this object - not sure we need this...
-     * There are several same pieces(ex. 8 Pawns) so how abt give them a name?
-     * <p>
      * String type:
      * Type of the piece, this will be assigned at the initialization
      * ex) Queen, Rook...
@@ -26,7 +22,6 @@ public abstract class Piece {
      *
      * @author Richard
      */
-    protected String name;
     protected String type;
     protected boolean isWhite;
     protected Position position;
@@ -46,7 +41,14 @@ public abstract class Piece {
      *
      * @param newPosition is the position that this piece will move
      */
-    protected abstract boolean move(Position newPosition);
+    protected boolean move(Position newPosition, Piece[][] board, boolean isWhiteTurn){
+        return true;
+    }
+
+
+    protected boolean move(Position newPosition){
+        return true;
+    }
 
     /**
      * check the destination point is available to move

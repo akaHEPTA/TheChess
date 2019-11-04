@@ -1,9 +1,11 @@
+import java.io.*;
+
 public class Game {
     // Fields
     private Piece[][] myBoard;
     private Display myDisplay;
     private InputCollector myInput;
-    private boolean finish = true;
+    private boolean finish = false;
     private boolean isWhiteTurn = true;
     private boolean isTurnChanged = true;
 
@@ -45,17 +47,17 @@ public class Game {
         myBoard[7][6] = new Knight("Knight", true, new Position(7, 6));
         myBoard[7][7] = new Rook("Rook", true, new Position(7, 7));
 
-        for (int i = 0; i < 8; i++) {
-            myBoard[1][i] = new Pawn("Pawn", false, new Position(1, i));
-            myBoard[6][i] = new Pawn("Pawn", true, new Position(6, i));
-        }
+//        for (int i = 0; i < 8; i++) {
+//            myBoard[1][i] = new Pawn("Pawn", false, new Position(1, i));
+//            myBoard[6][i] = new Pawn("Pawn", true, new Position(6, i));
+//        }
     }
 
     /**
      * Main method that this program runs
      */
     public void run() {
-        while (finish) {
+        while (!finish) {
             if (isTurnChanged) {
                 myDisplay.printBoard(myBoard);
                 isTurnChanged = false;
@@ -86,17 +88,37 @@ public class Game {
         }
     }
 
+    /**
+     * show the 'help' list
+     */
     private void switchHelp() {
         myDisplay.printHelp();
     }
 
+    /**
+     * show the 'board' again
+     */
     private void switchBoard() {
         myDisplay.printBoard(myBoard);
     }
 
+    /**
+     * finish the game and score the players
+     * show the result of this game
+     */
     private void switchResign() {
-        /* game over command - not finished */
-        myDisplay.printResign();
+        /* not finished
+
+        Game over command
+
+        1. check the turn and make score data
+        2. finish = true;
+        ...
+        add more
+
+        */
+        finish = true;
+        myDisplay.printResign(isWhiteTurn);
     }
 
     private void switchMove() {
@@ -112,42 +134,68 @@ public class Game {
     private void switchUCI(String input) {
         /* not finished
 
-        1-1. if it's correct UCI command
-            -> interpret UCI command to Piece & Position
-        1-2. if it's incorrect UCI command
-            -> show the message and just finish this cycle
+        1-1. If it's correct UCI command
+            -> Interpret UCI command to Piece & Position
+
+        1-2. If it's incorrect UCI command
+            -> Show the message and just finish this cycle
             -> "BUT DO NOT TRIGGER TO CHANGE PLAYER"
-            -> this player will input another command
+            -> This same player will input command again
 
-        2. (after 1-1) call move method of the Piece
+        2. (after 1-1) Call move method of the selected Piece
+            -> move() method return true after the moving if the position is available
+            -> If the position is unavailable, it doesn't move and just return false
 
-        3-1. if it's valid position -> move & trigger to next turn
-        3-2. if it's invalid position -> do
+        3-1. If it's moved (correct Position case)
+            -> Trigger to next turn
+            -> isWhiteTurn = !isWhiteTurn
+            -> isTurnChanged = True
+
+            ------> Extra challenge feature:
+            If you want to save the play log as a text file, make another class that controls file write
+            In this step(correctly moved) you can take a String to save...
+
+        3-2. If it doesn't moved (incorrect Position case)
+            -> Show the message and just finish this cycle
+            -> "BUT DO NOT TRIGGER TO CHANGE PLAYER"
+            -> This same player will input command again
         */
-        while (true) {
-
-
-            break;
+        if (input.equals("d1d5")){
+            if (myBoard[7][3].move(new Position(3, 3), myBoard, isWhiteTurn)) {
+                myBoard[3][3] = myBoard[7][3];
+                myBoard[7][3] = null;
+            }
         }
-        myDisplay.printUCI();
+
+        myDisplay.printBoard(myBoard);
     }
 
     /**
      * interpret UCI command to use
      */
-    private void convertUCI() {
+    private void convertUCI(String input) {
 
     }
 
-    /*
-    public static void main(String[] args) {
-        Display myDisplay = new Display();
-        boolean isWhiteTurn = true;
-        myDisplay.printTurn(isWhiteTurn);
-        isWhiteTurn = false;
-        myDisplay.printTurn(isWhiteTurn);
+    //* Extra challenge feature: File writer class
+    public class MyFileWrite {
+        private PrintWriter myPW;
+        private int counter = 0;
+
+        public MyFileWrite() throws IOException {
+            myPW = new PrintWriter(new BufferedWriter(new FileWriter("/log/temp.txt")));
+            File newFile = new File("");
+        }
+
+        private void recordMove(String move) throws IOException {
+            myPW.println((counter++) + ". " + move);
+        }
+
+        private void endRecord() throws IOException {
+            myPW.close();
+        }
     }
-    */
+    //*/
 }
 /*
 00 01 02 03 04 05 06 07  0  8
