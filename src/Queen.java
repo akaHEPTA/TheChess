@@ -20,7 +20,6 @@ public class Queen extends Piece {
             this.position = newPosition;
             result = true;
         }
-
         return result;
     }
 
