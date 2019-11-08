@@ -6,26 +6,90 @@ public class Bishop extends Piece {
         super(type, isWhite, position);
     }
 
+    /**
+     * @param newPosition is the position that this piece will move
+     * @param board       is present board data
+     * @return is boolean type value that move command works or not
+     */
     @Override
-    protected boolean move(Position destination) {
-        return false;
+    protected boolean move(Position newPosition, Piece[][] board) {
+        boolean result = false;
+
+        // It should check super's validity (grid range) && Queen's validity
+        if (super.isValidMove(newPosition, board) && isValidMove(newPosition, board)) {
+            this.position = newPosition;
+            result = true;
+        }
+
+        return result;
     }
 
+    /**
+     * @param newPosition is the position that this piece will move
+     * @param board       is present board data
+     * @return is boolean type value that move command is valid or not
+     */
     @Override
-    protected boolean isValidMove(Position newPosition) {
-        return false;
+    protected boolean isValidMove(Position newPosition, Piece[][] board) {
+        boolean result = false;
+        ArrayList<Position> validMoveList = getValidMoveList(board);
+        for (Position position : validMoveList)
+            if (position.equals(newPosition)) result = true;
+        return result;
     }
 
+    /**
+     * @param board is present board data
+     * @return is ArrayList that contains valid moves
+     */
     @Override
-    public ArrayList<Position> getValidMoveList() {
-        return null;
+    public ArrayList<Position> getValidMoveList(Piece[][] board) {
+        ArrayList<Position> validPositions = new ArrayList<>();
+        int rowPosition = this.position.getRow(), colPosition = this.position.getCol();
+
+        // Right forward diagonal
+        for (int i = 1; i < 8; i++) {
+            if (rowPosition - i >= 0 && rowPosition - i < 8 && colPosition + i >= 0 && colPosition + i < 8)
+                if (board[rowPosition - i][colPosition + i] == null
+                        || board[rowPosition - i][colPosition + i].isWhite != this.isWhite) {
+                    validPositions.add(new Position(rowPosition - i, colPosition + i));
+                }
+        }
+
+        // Right back diagonal
+        for (int i = 1; i < 8; i++) {
+            if (rowPosition + i >= 0 && rowPosition + i < 8 && colPosition + i >= 0 && colPosition + i < 8)
+                if (board[rowPosition + i][colPosition + i] == null
+                        || board[rowPosition + i][colPosition + i].isWhite != this.isWhite) {
+                    validPositions.add(new Position(rowPosition + i, colPosition + i));
+                }
+        }
+
+        // Left back diagonal
+        for (int i = 1; i < 8; i++) {
+            if (rowPosition + i >= 0 && rowPosition + i < 8 && colPosition - i >= 0 && colPosition - i < 8)
+                if (board[rowPosition + i][colPosition - i] == null
+                        || board[rowPosition + i][colPosition - i].isWhite != this.isWhite) {
+                    validPositions.add(new Position(rowPosition + i, colPosition - i));
+                }
+        }
+
+        // Left forward diagonal
+        for (int i = 1; i < 8; i++) {
+            if (rowPosition - i >= 0 && rowPosition - i < 8 && colPosition - i >= 0 && colPosition - i < 8)
+                if (board[rowPosition - i][colPosition - i] == null
+                        || board[rowPosition - i][colPosition - i].isWhite != this.isWhite) {
+                    validPositions.add(new Position(rowPosition - i, colPosition - i));
+                }
+        }
+
+        return validPositions;
     }
 
     @Override
     public String toString() {
         return null;
     }
-
 }
 
 /*

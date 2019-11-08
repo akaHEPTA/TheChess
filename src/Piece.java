@@ -40,15 +40,9 @@ public abstract class Piece {
      * if other player's piece is occupying the destination, your piece will capture
      *
      * @param newPosition is the position that this piece will move
+     * @param board is present board status to check
      */
-    protected boolean move(Position newPosition, Piece[][] board, boolean isWhiteTurn){
-        return true;
-    }
-
-
-    protected boolean move(Position newPosition){
-        return true;
-    }
+    protected abstract boolean move(Position newPosition, Piece[][] board);
 
     /**
      * check the destination point is available to move
@@ -57,10 +51,10 @@ public abstract class Piece {
      *
      * @return true if it's valid, false in invalid
      */
-    protected boolean isValidMove(Position newPosition) {
+    protected boolean isValidMove(Position newPosition, Piece[][] board) {
         boolean result = false;
 
-        if (newPosition.getRow() <= 0 && newPosition.getRow() <= 7
+        if (newPosition.getRow() >= 0 && newPosition.getRow() <= 7
                 && newPosition.getCol() >= 0 && newPosition.getCol() <= 7)
             result = true;
 
@@ -72,7 +66,7 @@ public abstract class Piece {
      *
      * @return ArrayList of available Position objects list
      */
-    public abstract ArrayList<Position> getValidMoveList();
+    public abstract ArrayList<Position> getValidMoveList(Piece[][] board);
 
     @Override
     public abstract String toString();

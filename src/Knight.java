@@ -7,17 +7,17 @@ public class Knight extends Piece {
     }
 
     @Override
-    protected boolean move(Position destination) {
+    protected boolean move(Position newPosition, Piece[][] board) {
         return false;
     }
 
     @Override
-    protected boolean isValidMove(Position newPosition) {
+    protected boolean isValidMove(Position newPosition, Piece[][] board) {
         return false;
     }
 
     @Override
-    public ArrayList<Position> getValidMoveList() {
+    public ArrayList<Position> getValidMoveList(Piece[][] Board) {
         return null;
     }
 

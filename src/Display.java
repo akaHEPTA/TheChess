@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class Display {
     // Constants
     /**
@@ -6,9 +9,28 @@ public class Display {
      */
     private static final char[][] SYMBOLS = {{'♙', '♘', '♗', '♖', '♕', '♔'}, {'♟', '♞', '♝', '♜', '♛', '♚'}};
 
+    private static final char WHITE_PAWN = '♙';
+    private static final char WHITE_KNIGHT = '♘';
+    private static final char WHITE_BISHOP = '♗';
+    private static final char WHITE_ROOK = '♖';
+    private static final char WHITE_QUEEN = '♕';
+    private static final char WHITE_KING = '♔';
+
+    private static final char BLACK_PAWN = '♟';
+    private static final char BLACK_KNIGHT = '♞';
+    private static final char BLACK_BISHOP = '♝';
+    private static final char BLACK_ROOK = '♜';
+    private static final char BLACK_QUEEN = '♛';
+    private static final char BLACK_KING = '♚';
+
     // Constructor
     public Display() {
         System.out.println("[!] Display module online");
+    }
+
+    public void printFileWriteError(IOException e) {
+        System.out.println("[!] File Write module offline");
+        System.out.println(e);
     }
 
     /**
@@ -22,43 +44,43 @@ public class Display {
                 if (board[i][j] != null && board[i][j].isWhite) {
                     switch (board[i][j].type) {
                         case "Pawn":
-                            System.out.print(SYMBOLS[0][0] + "  ");
+                            System.out.print(WHITE_PAWN + "  ");
                             break;
                         case "Knight":
-                            System.out.print(SYMBOLS[0][1] + "  ");
+                            System.out.print(WHITE_KNIGHT + "  ");
                             break;
                         case "Bishop":
-                            System.out.print(SYMBOLS[0][2] + "  ");
+                            System.out.print(WHITE_BISHOP + "  ");
                             break;
                         case "Rook":
-                            System.out.print(SYMBOLS[0][3] + "  ");
+                            System.out.print(WHITE_ROOK + "  ");
                             break;
                         case "Queen":
-                            System.out.print(SYMBOLS[0][4] + "  ");
+                            System.out.print(WHITE_QUEEN + "  ");
                             break;
                         case "King":
-                            System.out.print(SYMBOLS[0][5] + "  ");
+                            System.out.print(WHITE_KING + "  ");
                             break;
                     }
                 } else if (board[i][j] != null && !board[i][j].isWhite) {
                     switch (board[i][j].type) {
                         case "Pawn":
-                            System.out.print(SYMBOLS[1][0] + "  ");
+                            System.out.print(BLACK_PAWN + "  ");
                             break;
                         case "Knight":
-                            System.out.print(SYMBOLS[1][1] + "  ");
+                            System.out.print(BLACK_KNIGHT + "  ");
                             break;
                         case "Bishop":
-                            System.out.print(SYMBOLS[1][2] + "  ");
+                            System.out.print(BLACK_BISHOP + "  ");
                             break;
                         case "Rook":
-                            System.out.print(SYMBOLS[1][3] + "  ");
+                            System.out.print(BLACK_ROOK + "  ");
                             break;
                         case "Queen":
-                            System.out.print(SYMBOLS[1][4] + "  ");
+                            System.out.print(BLACK_QUEEN + "  ");
                             break;
                         case "King":
-                            System.out.print(SYMBOLS[1][5] + "  ");
+                            System.out.print(BLACK_KING + "  ");
                             break;
                     }
                 } else {
@@ -86,7 +108,7 @@ public class Display {
         System.out.println("* type 'help' for help");
         System.out.println("* type 'board' to see the board again");
         System.out.println("* type 'resign' to resign");
-        System.out.println("* type 'moves' to list all possible moves");
+        // System.out.println("* type 'moves' to list all possible moves");
         System.out.println("* type a square (e.g. b1, e2) to list possible moves for that square");
         System.out.println("* type UCI (e.g. b1c3, e7e8q) to make a move");
         System.out.println();
@@ -97,20 +119,27 @@ public class Display {
         System.out.println((isWhiteTurn ? "White" : "Black") + " resigned. Game over.");
     }
 
-    public void printMove() {
-        /* not finished */
+    public void printMove(ArrayList<Position> Positions) {
+        System.out.println("Valid Moves: " + Positions);
+        System.out.println();
     }
 
     public void printSquare() {
         /* not finished */
     }
 
-    public void printUCI() {
+    public void printUCI(boolean moveOK) {
+        if (moveOK)
+            System.out.println("OK\n");
+        else
+            System.out.println("[!] Invalid Move");
     }
 
     public void printNewLine() {
         System.out.println();
     }
+
+
 }
 
 

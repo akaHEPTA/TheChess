@@ -5,6 +5,7 @@ public class Game {
     private Piece[][] myBoard;
     private Display myDisplay;
     private InputCollector myInput;
+    private MyFileWrite myFW;
     private boolean finish = false;
     private boolean isWhiteTurn = true;
     private boolean isTurnChanged = true;
@@ -23,6 +24,11 @@ public class Game {
         myBoard = new Piece[8][8];
         myDisplay = new Display();
         myInput = new InputCollector();
+        try {
+            myFW = new MyFileWrite();
+        } catch (IOException e) {
+            myDisplay.printFileWriteError(e);
+        }
     }
 
     /**
@@ -76,9 +82,6 @@ public class Game {
                 case "resign":
                     switchResign();
                     break;
-                case "move":
-                    switchMove();
-                    break;
                 case "square":
                     switchSquare();
                     break;
@@ -121,16 +124,27 @@ public class Game {
         myDisplay.printResign(isWhiteTurn);
     }
 
+    /**
+     * MOVED TO SUB-CASE OF DEFAULT CASE
+     */
     private void switchMove() {
         /* show valid move list - not finished */
-        myDisplay.printMove();
+        //myDisplay.printMove();
     }
 
+    /**
+     * List all of the valid moves in the square
+     */
     private void switchSquare() {
         /* show valid move list of specific square - not finished */
         myDisplay.printSquare();
     }
 
+    /**
+     * If the input is not help/board/resign/square, this block will be executed
+     *
+     * @param input is command of player (String)
+     */
     private void switchUCI(String input) {
         /* not finished
 
@@ -159,43 +173,81 @@ public class Game {
             -> Show the message and just finish this cycle
             -> "BUT DO NOT TRIGGER TO CHANGE PLAYER"
             -> This same player will input command again
+
+        ----------
+
+        check length >
+        if it's 2 -> show the whole possible move list
+                4 -> try move
+                5 -> move + special order (promotion)
+
+        else: throw away
         */
-        if (input.equals("d1d5")){
-            if (myBoard[7][3].move(new Position(3, 3), myBoard, isWhiteTurn)) {
-                myBoard[3][3] = myBoard[7][3];
-                myBoard[7][3] = null;
-            }
+
+        // remove all whitespaces from the input
+        input = input.replace(" ", "");
+
+        switch (input.length()) {
+            case 2:
+                /*
+                1. check validity (piece) "CHECK THE TURN OF COLOR"
+                2-1. true -> call the piece's getValidMoveList
+                2-2. false -> show message & skip the other steps
+                 */
+                Position piece = convertUCI(input);
+                myDisplay.printMove(myBoard[piece.getRow()][piece.getCol()].getValidMoveList(myBoard));
+                break;
+            case 4:
+                /*
+                1. check validity (piece + new position) "CHECK THE TURN OF COLOR"
+                2-1: true -> call the piece's move method
+                2-2: false -> show message & skip the other steps
+                 */
+                Position piece2 = convertUCI(input.substring(0, 2));
+                Position newPosition = convertUCI(input.substring(2, 4));
+                boolean moveOk = myBoard[piece2.getRow()][piece2.getCol()].move(newPosition, myBoard);
+                myBoard[newPosition.getRow()][newPosition.getCol()] = myBoard[piece2.getRow()][piece2.getCol()];
+                myBoard[piece2.getRow()][piece2.getCol()] = null;
+                myDisplay.printUCI(moveOk);
+
+                break;
+            case 5:
+                /*
+                1. check validity (piece + new position + promotion)
+                2-1: true -> call the piece's move method and promotion
+                */
+                break;
+            default:
+                /* show invalid command message and finish the cycle to get it again */
+                break;
         }
 
-        myDisplay.printBoard(myBoard);
+//        /* test code */
+//        if (input.equals("d1d5")) {
+//            if (myBoard[7][3].move(new Position(3, 3), myBoard)) {
+//                myBoard[3][3] = myBoard[7][3];
+//                myBoard[7][3] = null;
+//            }
+//            System.out.println(myBoard[7][3].getValidMoveList(myBoard));
+//        }
+//
+//        System.out.println("OK");
+
     }
 
     /**
      * interpret UCI command to use
      */
-    private void convertUCI(String input) {
+    private Position convertUCI(String input) {
+        /* not finished yet - try / catch */
+        int col = input.charAt(0) - 97;
+        int row = 8 - Integer.parseInt(
+                input.substring(1, 2));
 
+        return new Position(row, col);
     }
 
-    //* Extra challenge feature: File writer class
-    public class MyFileWrite {
-        private PrintWriter myPW;
-        private int counter = 0;
 
-        public MyFileWrite() throws IOException {
-            myPW = new PrintWriter(new BufferedWriter(new FileWriter("/log/temp.txt")));
-            File newFile = new File("");
-        }
-
-        private void recordMove(String move) throws IOException {
-            myPW.println((counter++) + ". " + move);
-        }
-
-        private void endRecord() throws IOException {
-            myPW.close();
-        }
-    }
-    //*/
 }
 /*
 00 01 02 03 04 05 06 07  0  8
