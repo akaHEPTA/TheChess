@@ -32,3 +32,5 @@ chess_example_screenshots/*
 
 
 .DS_Store
+
+log/*

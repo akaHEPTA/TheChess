@@ -120,6 +120,10 @@ public class Game {
         add more
 
         */
+        try {
+            myFW.endRecord();
+        } catch (IOException e) {
+        }
         finish = true;
         myDisplay.printResign(isWhiteTurn);
     }
@@ -136,7 +140,12 @@ public class Game {
      * List all of the valid moves in the square
      */
     private void switchSquare() {
-        /* show valid move list of specific square - not finished */
+        /* show valid move list of specific square - not finished
+        1. valid check
+        2. call getValidMoveList() method from each of the objects
+        3-1. call printSquare() method in display module
+        3-2. pass the ArrayList of the valid moves as a parameter
+        */
         myDisplay.printSquare();
     }
 
@@ -147,6 +156,8 @@ public class Game {
      */
     private void switchUCI(String input) {
         /* not finished
+
+        0. Valid check of the input
 
         1-1. If it's correct UCI command
             -> Interpret UCI command to Piece & Position
@@ -206,15 +217,24 @@ public class Game {
                 Position piece2 = convertUCI(input.substring(0, 2));
                 Position newPosition = convertUCI(input.substring(2, 4));
                 boolean moveOk = myBoard[piece2.getRow()][piece2.getCol()].move(newPosition, myBoard);
-                myBoard[newPosition.getRow()][newPosition.getCol()] = myBoard[piece2.getRow()][piece2.getCol()];
-                myBoard[piece2.getRow()][piece2.getCol()] = null;
+                if (moveOk) {
+                    myBoard[newPosition.getRow()][newPosition.getCol()] = myBoard[piece2.getRow()][piece2.getCol()];
+                    myBoard[piece2.getRow()][piece2.getCol()] = null;
+                    myFW.recordMove(input);
+                    isWhiteTurn = !isWhiteTurn;
+                    isTurnChanged = true;
+                }
                 myDisplay.printUCI(moveOk);
 
                 break;
             case 5:
                 /*
+                THIS METHOD REQUIRES PAWN'S PROMOTION CODE FIRST
+                WORK ON IT LATER WHEN THE PROMOTION IS COMPLETED
+
                 1. check validity (piece + new position + promotion)
                 2-1: true -> call the piece's move method and promotion
+
                 */
                 break;
             default:
@@ -240,6 +260,12 @@ public class Game {
      */
     private Position convertUCI(String input) {
         /* not finished yet - try / catch */
+        /**
+         * ASCII code used
+         * (a = 97)
+         *
+         * TRY-CATCH BLOCK REQUIRED
+         */
         int col = input.charAt(0) - 97;
         int row = 8 - Integer.parseInt(
                 input.substring(1, 2));

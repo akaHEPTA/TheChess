@@ -8,34 +8,44 @@ import java.util.Date;
 public class MyFileWrite {
     // Field
     private PrintWriter myPW;
-    private int counter = 0;
+    private int counter = 1;
     private File newFile;
-    private SimpleDateFormat date;
+    private static final String newFileName = "./log/temp.txt";
     private SimpleDateFormat time;
 
     public MyFileWrite() throws IOException {
         setFile();
         initializeObjects();
-        myPW.println(date.format(date) + " " + date.format(time));
     }
 
-    private void initializeObjects() {
-        date = new SimpleDateFormat("MM/dd/yyyy");
-        time = new SimpleDateFormat("hh:mm:ss a");
+    private void initializeObjects() throws IOException {
+        myPW = new PrintWriter(new BufferedWriter(new FileWriter(newFileName)));
+        time = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+
+        myPW.println(time.format(new Date(System.currentTimeMillis())));
     }
 
-    private void setFile() throws IOException {
-        newFile = new File("/log/temp.txt");
-        myPW = new PrintWriter(new BufferedWriter(new FileWriter("/log/temp.txt")));
+    private void setFile() {
+        newFile = new File(newFileName);
+        try {
+            if (newFile.exists()) {
+                newFile.delete();
+                System.out.println("[!] File exist");
+            } else {
+                System.out.println("[!] File not exist");
+            }
+            newFile.createNewFile();
+        } catch (IOException e) {
+            System.out.println("[!] Log module is offline");
+        }
     }
 
-    private void recordMove(String move) {
+    public void recordMove(String move) {
         myPW.println((counter++) + ". " + move);
     }
 
-    private void endRecord() throws IOException {
-        Date today = new Date();
-        File temp = new File("/log/" + date.format(today) + "_" + time.format(today));
+    public void endRecord() throws IOException {
+        File temp = new File("./log/" + time.format(new Date()));
         newFile.renameTo(temp);
         myPW.close();
     }
