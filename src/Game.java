@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 
 public class Game {
     // Fields
@@ -9,6 +10,7 @@ public class Game {
     private boolean finish = false;
     private boolean isWhiteTurn = true;
     private boolean isTurnChanged = true;
+    private Position position;
 
     // Constructor
     public Game() {
@@ -190,6 +192,34 @@ public class Game {
 
         // remove all whitespaces from the input
         input = input.replace(" ", "");
+
+        // square
+        ArrayList<Position> squareList = new ArrayList<>();
+        if (input.contains(",")){
+            Position p1 = convertUCI(input.substring(0, 2));
+            Position p2 = convertUCI(input.substring(3, 5));
+
+            // get every position
+            int minRow = Math.min(p1.getRow(), p2.getRow());
+            int maxRow = Math.max(p1.getRow(), p2.getRow());
+            int minCol = Math.min(p1.getCol(), p2.getCol());
+            int maxCol = Math.max(p1.getCol(), p2.getCol());
+
+            for (int i = maxRow; i >= minRow; i--){
+                for (int j = minCol; j <= maxCol; j++){
+                    squareList.add(new Position( i, j));
+                }
+            }
+            // check validity
+            for (int i = 0; i < squareList.size(); i++) {
+                if (myBoard[squareList.get(i).getRow()][squareList.get(i).getCol()] == null){
+                    System.out.println(squareList.get(i)+ ": no piece in this position");
+                } else {
+                    System.out.println(squareList.get(i)+ ": " +
+                            myBoard[squareList.get(i).getRow()][squareList.get(i).getCol()].getValidMoveList(myBoard));
+                }
+            }
+        }
 
         switch (input.length()) {
             case 2:
