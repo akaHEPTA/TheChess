@@ -10,7 +10,7 @@ public class Knight extends Piece {
     protected boolean move(Position newPosition, Piece[][] board) {
         boolean result = false;
         // It should check super's validity (grid range) && Knight's validity
-        if (super.isValidMove(newPosition, board) && isValidMove(newPosition, board)) {
+        if (isValidMove(newPosition, board)) {
             this.position = newPosition;
             result = true;
         }
@@ -29,8 +29,7 @@ public class Knight extends Piece {
     @Override
     public ArrayList<Position> getValidMoveList(Piece[][] board) {
         ArrayList<Position> validPositions = new ArrayList<>();
-        int rowPosition = this.position.getRow();
-        int colPosition = this.position.getCol();
+        int rowPosition = this.position.getRow(), colPosition = this.position.getCol();
 
         // 1 o'clock position
         if (rowPosition + 2 >= 0 && rowPosition + 2 < 8 && colPosition + 1 >= 0 && colPosition + 1 < 8) {
@@ -47,7 +46,7 @@ public class Knight extends Piece {
             }
         }
         // 4 o'clock position
-        if (rowPosition - 1 >= 0 && rowPosition - 1 < 8 && colPosition + 2 >= 0 && colPosition + 2 < 8) {
+        if (isInRange(rowPosition - 1, colPosition + 2)) {
             if (board[rowPosition - 1][colPosition + 2] == null
                     || board[rowPosition - 1][colPosition + 2].isWhite != this.isWhite) {
                 validPositions.add(new Position(rowPosition - 1, colPosition + 2));

@@ -35,28 +35,32 @@ public class Game {
      * Create all the pieces on the board
      */
     private void createPieces() {
-        myBoard[0][0] = new Rook("Rook", false, new Position(0, 0));
-        myBoard[0][1] = new Knight("Knight", false, new Position(0, 1));
-        myBoard[0][2] = new Bishop("Bishop", false, new Position(0, 2));
-        myBoard[0][3] = new Queen("Queen", false, new Position(0, 3));
-        myBoard[0][4] = new King("King", false, new Position(0, 4));
-        myBoard[0][5] = new Bishop("Bishop", false, new Position(0, 5));
-        myBoard[0][6] = new Knight("Knight", false, new Position(0, 6));
-        myBoard[0][7] = new Rook("Rook", false, new Position(0, 7));
-
-        myBoard[7][0] = new Rook("Rook", true, new Position(7, 0));
-        myBoard[7][1] = new Knight("Knight", true, new Position(7, 1));
-        myBoard[7][2] = new Bishop("Bishop", true, new Position(7, 2));
-        myBoard[7][3] = new Queen("Queen", true, new Position(7, 3));
-        myBoard[7][4] = new King("King", true, new Position(7, 4));
-        myBoard[7][5] = new Bishop("Bishop", true, new Position(7, 5));
-        myBoard[7][6] = new Knight("Knight", true, new Position(7, 6));
-        myBoard[7][7] = new Rook("Rook", true, new Position(7, 7));
+//        myBoard[0][0] = new Rook("Rook", false, new Position(0, 0));
+//        myBoard[0][1] = new Knight("Knight", false, new Position(0, 1));
+//        myBoard[0][2] = new Bishop("Bishop", false, new Position(0, 2));
+//        myBoard[0][3] = new Queen("Queen", false, new Position(0, 3));
+//        myBoard[0][4] = new King("King", false, new Position(0, 4));
+//        myBoard[0][5] = new Bishop("Bishop", false, new Position(0, 5));
+//        myBoard[0][6] = new Knight("Knight", false, new Position(0, 6));
+//        myBoard[0][7] = new Rook("Rook", false, new Position(0, 7));
+//
+//        myBoard[7][0] = new Rook("Rook", true, new Position(7, 0));
+//        myBoard[7][1] = new Knight("Knight", true, new Position(7, 1));
+//        myBoard[7][2] = new Bishop("Bishop", true, new Position(7, 2));
+//        myBoard[7][3] = new Queen("Queen", true, new Position(7, 3));
+//        myBoard[7][4] = new King("King", true, new Position(7, 4));
+//        myBoard[7][5] = new Bishop("Bishop", true, new Position(7, 5));
+//        myBoard[7][6] = new Knight("Knight", true, new Position(7, 6));
+//        myBoard[7][7] = new Rook("Rook", true, new Position(7, 7));
 
 //        for (int i = 0; i < 8; i++) {
 //            myBoard[1][i] = new Pawn("Pawn", false, new Position(1, i));
 //            myBoard[6][i] = new Pawn("Pawn", true, new Position(6, i));
 //        }
+
+        /* test code */
+        myBoard[7][3] = new Queen("Queen", true, new Position(7, 3));
+        myBoard[4][3] = new Bishop("Bishop", false, new Position(0, 2));
     }
 
     /**
@@ -120,20 +124,9 @@ public class Game {
         add more
 
         */
-        try {
-            myFW.endRecord();
-        } catch (IOException e) {
-        }
+        myFW.endRecord();
         finish = true;
         myDisplay.printResign(isWhiteTurn);
-    }
-
-    /**
-     * MOVED TO SUB-CASE OF DEFAULT CASE
-     */
-    private void switchMove() {
-        /* show valid move list - not finished */
-        //myDisplay.printMove();
     }
 
     /**
@@ -200,59 +193,63 @@ public class Game {
 
         switch (input.length()) {
             case 2:
-                /*
-                1. check validity (piece) "CHECK THE TURN OF COLOR"
-                2-1. true -> call the piece's getValidMoveList
-                2-2. false -> show message & skip the other steps
-                 */
-                Position piece = convertUCI(input);
-                myDisplay.printMove(myBoard[piece.getRow()][piece.getCol()].getValidMoveList(myBoard));
+                switchGetMoveList(input);
                 break;
             case 4:
-                /*
-                1. check validity (piece + new position) "CHECK THE TURN OF COLOR"
-                2-1: true -> call the piece's move method
-                2-2: false -> show message & skip the other steps
-                 */
-                Position piece2 = convertUCI(input.substring(0, 2));
-                Position newPosition = convertUCI(input.substring(2, 4));
-                boolean moveOk = myBoard[piece2.getRow()][piece2.getCol()].move(newPosition, myBoard);
-                if (moveOk) {
+                switchMove(input);
+                break;
+            case 5:
+                switchPromotion(input);
+                break;
+            default:
+                /* show invalid command message and finish the cycle to get it again */
+                break;
+        }
+    }
+
+    private void switchGetMoveList(String input) {
+        Position piece = convertUCI(input);
+        if (myBoard[piece.getRow()][piece.getCol()] != null)
+            myDisplay.printMove(input, myBoard[piece.getRow()][piece.getCol()].getValidMoveList(myBoard));
+        else
+            myDisplay.printMoveFail();
+    }
+
+    private void switchMove(String input) {
+        boolean moveOK = false;
+        int errorCode = 0;
+        Position piece2 = convertUCI(input.substring(0, 2));
+        Position newPosition = convertUCI(input.substring(2, 4));
+        // null check
+        if (myBoard[piece2.getRow()][piece2.getCol()] != null) {
+            // team check
+            if (myBoard[piece2.getRow()][piece2.getCol()].isWhite == isWhiteTurn) {
+                // move check & actual move sequence
+                moveOK = myBoard[piece2.getRow()][piece2.getCol()].move(newPosition, myBoard);
+                if (moveOK) {
                     myBoard[newPosition.getRow()][newPosition.getCol()] = myBoard[piece2.getRow()][piece2.getCol()];
                     myBoard[piece2.getRow()][piece2.getCol()] = null;
                     myFW.recordMove(input);
                     isWhiteTurn = !isWhiteTurn;
                     isTurnChanged = true;
                 }
-                myDisplay.printUCI(moveOk);
-
-                break;
-            case 5:
-                /*
-                THIS METHOD REQUIRES PAWN'S PROMOTION CODE FIRST
-                WORK ON IT LATER WHEN THE PROMOTION IS COMPLETED
-
-                1. check validity (piece + new position + promotion)
-                2-1: true -> call the piece's move method and promotion
-
-                */
-                break;
-            default:
-                /* show invalid command message and finish the cycle to get it again */
-                break;
+            } else {
+                errorCode = 1; // team not matched
+            }
+        } else {
+            errorCode = 2; // piece is not exist (null)
         }
+        myDisplay.printUCI(moveOK, errorCode);
+    }
 
-//        /* test code */
-//        if (input.equals("d1d5")) {
-//            if (myBoard[7][3].move(new Position(3, 3), myBoard)) {
-//                myBoard[3][3] = myBoard[7][3];
-//                myBoard[7][3] = null;
-//            }
-//            System.out.println(myBoard[7][3].getValidMoveList(myBoard));
-//        }
-//
-//        System.out.println("OK");
+    private void switchPromotion(String input) {
+        /*
+        THIS METHOD REQUIRES PAWN'S PROMOTION CODE FIRST
+        WORK ON IT LATER WHEN THE PROMOTION IS COMPLETED
 
+        1. check validity (piece + new position + promotion)
+        2-1: true -> call the piece's move method and promotion
+        */
     }
 
     /**

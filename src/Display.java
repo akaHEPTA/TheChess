@@ -119,20 +119,44 @@ public class Display {
         System.out.println((isWhiteTurn ? "White" : "Black") + " resigned. Game over.");
     }
 
-    public void printMove(ArrayList<Position> Positions) {
-        System.out.println("Valid Moves: " + Positions);
+    public void printMove(String piece, ArrayList<Position> Positions) {
+        System.out.println("Valid Moves ["+ piece + "] : " + Positions);
         System.out.println();
+    }
+
+    public void printMoveFail(){
+        System.out.println("[!] Invalid Position : There is no Piece");
+        printNewLine();
     }
 
     public void printSquare() {
         /* not finished */
     }
 
-    public void printUCI(boolean moveOK) {
+    public void printUCI(boolean moveOK, int code) {
         if (moveOK)
-            System.out.println("OK\n");
-        else
-            System.out.println("[!] Invalid Move");
+            System.out.println("OK");
+        else {
+            System.out.print("[!] Invalid Move");
+            switch (code) {
+                case 1:
+                    System.out.println(" : The piece is not your team");
+                    break;
+                case 2:
+                    System.out.println(" : There is no piece");
+                    break;
+            }
+        }
+        printNewLine();
+    }
+
+
+    public void printUCIFail(String message) {
+        System.out.println("[!] Invalid Move : " + message);
+    }
+
+    public void printInvalidPieceMove(boolean isWhiteTurn) {
+        System.out.println("You can move only " + (isWhiteTurn ? "white" : "black") + " pieces");
     }
 
     public void printNewLine() {

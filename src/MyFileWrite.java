@@ -44,9 +44,8 @@ public class MyFileWrite {
         myPW.println((counter++) + ". " + move);
     }
 
-    public void endRecord() throws IOException {
-        File temp = new File("./log/" + time.format(new Date()));
-        newFile.renameTo(temp);
+    public void endRecord(){
+        newFile.renameTo(new File("./log/" + time.format(new Date())));
         myPW.close();
     }
 

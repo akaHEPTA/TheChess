@@ -1,13 +1,6 @@
 import java.util.ArrayList;
 
 public abstract class Piece {
-    // Constants
-    /**
-     * protected position value array that child classes' constructor can use to set its starting position
-     * will be filled with actual data...
-     */
-    protected final Position[] START_POSITION = null;
-
     // Fields
     /**
      * String type:
@@ -33,14 +26,13 @@ public abstract class Piece {
     }
 
     // Methods
-
     /**
      * move the position of this piece - common method for the all pieces
      * this move method has no safety codes, so you must call isValidMove() for validity check
      * if other player's piece is occupying the destination, your piece will capture
      *
      * @param newPosition is the position that this piece will move
-     * @param board is present board status to check
+     * @param board       is present board status to check
      */
     protected abstract boolean move(Position newPosition, Piece[][] board);
 
@@ -51,13 +43,11 @@ public abstract class Piece {
      *
      * @return true if it's valid, false in invalid
      */
-    protected boolean isValidMove(Position newPosition, Piece[][] board) {
+    protected boolean isValidMove(Position newPosition, Piece[][] board){
         boolean result = false;
-
-        if (newPosition.getRow() >= 0 && newPosition.getRow() <= 7
-                && newPosition.getCol() >= 0 && newPosition.getCol() <= 7)
-            result = true;
-
+        ArrayList<Position> validMoveList = getValidMoveList(board);
+        for (Position position : validMoveList)
+            if (position.equals(newPosition)) result = true;
         return result;
     }
 
@@ -66,14 +56,18 @@ public abstract class Piece {
      *
      * @return ArrayList of available Position objects list
      */
-    public abstract ArrayList<Position> getValidMoveList(Piece[][] board);
+    protected abstract ArrayList<Position> getValidMoveList(Piece[][] board);
+
+    protected boolean isInRange(int row, int col) {
+        if (row >= 0 && row < 8 && col >= 0 && col < 8) return true;
+        return false;
+    }
 
     @Override
     public abstract String toString();
 
 
     // Accessor
-
     /**
      * @return the piece's type
      */

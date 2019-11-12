@@ -16,7 +16,7 @@ public class Bishop extends Piece {
         boolean result = false;
 
         // It should check super's validity (grid range) && Queen's validity
-        if (super.isValidMove(newPosition, board) && isValidMove(newPosition, board)) {
+        if (isValidMove(newPosition, board)) {
             this.position = newPosition;
             result = true;
         }
