@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 public class Queen extends Piece {
 
-  public Queen(String type, boolean isWhite, Position position) {
-    super(type, isWhite, position);
-  }
+    public Queen(String type, boolean isWhite, Position position) {
+        super(type, isWhite, position);
+    }
 
     /**
      * @param newPosition is the position that this piece will move
@@ -14,29 +14,28 @@ public class Queen extends Piece {
     @Override
     protected boolean move(Position newPosition, Piece[][] board) {
         boolean result = false;
+
         // It should check super's validity (grid range) && Queen's validity
         if (isValidMove(newPosition, board)) {
             this.position = newPosition;
             result = true;
         }
+
         return result;
     }
-    return result;
-  }
 
     /**
      * @param newPosition is the position that this piece will move
      * @param board       is present board data
      * @return is boolean type value that move command is valid or not
      */
-//    @Override
-//    protected boolean isValidMove(Position newPosition, Piece[][] board) {
-//        boolean result = false;
-//        ArrayList<Position> validMoveList = getValidMoveList(board);
-//        for (Position position : validMoveList)
-//            if (position.equals(newPosition)) result = true;
-//        return result;
-//    }
+    @Override
+    protected boolean isValidMove(Position newPosition, Piece[][] board) {
+        boolean result = false;
+        ArrayList<Position> validMoveList = getValidMoveList(board);
+        for (Position position : validMoveList) if (position.equals(newPosition)) result = true;
+        return result;
+    }
 
     /**
      * @param board is present board data
@@ -77,20 +76,16 @@ public class Queen extends Piece {
                     isBlocked = true;
             }
         }
-    }
 
         return validPositions;
     }
 
-    return validPositions;
-  }
+    @Override
+    public String toString() {
+        return null;
+    }
 
-  @Override
-  public String toString() {
-    return null;
-  }
 }
-
 /*
 required to implement
 

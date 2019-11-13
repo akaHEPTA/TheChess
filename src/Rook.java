@@ -33,8 +33,7 @@ public class Rook extends Piece {
     protected boolean isValidMove(Position newPosition, Piece[][] board) {
         boolean result = false;
         ArrayList<Position> validMoveList = getValidMoveList(board);
-        for (Position position : validMoveList)
-            if (position.equals(newPosition)) result = true;
+        for (Position position : validMoveList) if (position.equals(newPosition)) result = true;
         return result;
     }
 
@@ -45,46 +44,38 @@ public class Rook extends Piece {
     @Override
     public ArrayList<Position> getValidMoveList(Piece[][] board) {
         ArrayList<Position> validPositions = new ArrayList<>();
-        int rowPosition = this.position.getRow(), colPosition = this.position.getCol();
 
-        // Forward
-        for (int i = 1; i < 8; i++) {
-            if (rowPosition - i >= 0 && rowPosition - i < 8)
-                if (board[rowPosition - i][colPosition] == null
-                        || board[rowPosition - i][colPosition].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition - i, colPosition));
-                }
-        }
+        validPositions.addAll(getValidWay(board, -1, 0));
+        validPositions.addAll(getValidWay(board, 0, +1));
+        validPositions.addAll(getValidWay(board, 1, 0));
+        validPositions.addAll(getValidWay(board, 0, -1));
 
-        // Right
-        for (int i = 1; i < 8; i++) {
-            if (colPosition + i >= 0 && colPosition + i < 8)
-                if (board[rowPosition][colPosition + i] == null
-                        || board[rowPosition][colPosition + i].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition, colPosition + i));
-                }
-        }
+        return validPositions;
+    }
 
-        // Back
-        for (int i = 1; i < 8; i++) {
-            if (rowPosition + i >= 0 && rowPosition + i < 8)
-                if (board[rowPosition + i][colPosition] == null
-                        || board[rowPosition + i][colPosition].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition + i, colPosition));
-                }
-        }
+    protected ArrayList<Position> getValidWay(Piece[][] board, int rowMove, int colMove) {
+        ArrayList<Position> validPositions = new ArrayList<>();
 
-        // Left
+        boolean isBlocked = false;
+
         for (int i = 1; i < 8; i++) {
-            if (colPosition - i >= 0 && colPosition - i < 8)
-                if (board[rowPosition][colPosition - i] == null
-                        || board[rowPosition][colPosition - i].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition, colPosition - i));
-                }
+            int rowPosition = this.position.getRow() + i * rowMove;
+            int colPosition = this.position.getCol() + i * colMove;
+
+            if (isInRange(rowPosition, colPosition) && !isBlocked) {
+                if (board[rowPosition][colPosition] == null)
+                    validPositions.add(new Position(rowPosition, colPosition));
+                else if (board[rowPosition][colPosition].isWhite != this.isWhite) {
+                    validPositions.add(new Position(rowPosition, colPosition));
+                    isBlocked = true;
+                } else
+                    isBlocked = true;
+            }
         }
 
         return validPositions;
     }
+
 
     @Override
     public String toString() {
