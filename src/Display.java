@@ -110,7 +110,7 @@ public class Display {
         System.out.println("* type 'help' for help");
         System.out.println("* type 'board' to see the board again");
         System.out.println("* type 'resign' to resign");
-        // System.out.println("* type 'moves' to list all possible moves");
+//         System.out.println("* type 'moves' to list all possible moves");
         System.out.println("* type a square (e.g. b1, e2) to list possible moves for that square");
         System.out.println("* type UCI (e.g. b1c3, e7e8q) to make a move");
         System.out.println();

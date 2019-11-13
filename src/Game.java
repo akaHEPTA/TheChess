@@ -209,7 +209,7 @@ public class Game {
                 if (moveOK) {
                     myBoard[newPosition.getRow()][newPosition.getCol()] = myBoard[piece2.getRow()][piece2.getCol()];
                     myBoard[piece2.getRow()][piece2.getCol()] = null;
-                    myFW.recordMove(input);
+//                    myFW.recordMove(input);
                     isWhiteTurn = !isWhiteTurn;
                     isTurnChanged = true;
                 }
