@@ -55,10 +55,10 @@ public class Game {
         myBoard[7][6] = new Knight("Knight", true, new Position(7, 6));
         myBoard[7][7] = new Rook("Rook", true, new Position(7, 7));
 
-//        for (int i = 0; i < 8; i++) {
-//            myBoard[1][i] = new Pawn("Pawn", false, new Position(1, i));
-//            myBoard[6][i] = new Pawn("Pawn", true, new Position(6, i));
-//        }
+        for (int i = 0; i < 8; i++) {
+            myBoard[1][i] = new Pawn("Pawn", false, new Position(1, i));
+            myBoard[6][i] = new Pawn("Pawn", true, new Position(6, i));
+        }
     }
 
     /**
@@ -84,9 +84,6 @@ public class Game {
                 case "resign":
                     switchResign();
                     break;
-                case "square":
-                    switchSquare();
-                    break;
                 default:
                     switchUCI(input);
             }
@@ -108,38 +105,19 @@ public class Game {
     }
 
     /**
-     * finish the game and score the players
-     * show the result of this game
+     * finish the game and score the players show the result of this game
      */
     private void switchResign() {
         /* not finished
-
         Game over command
-
         1. check the turn and make score data
         2. finish = true;
         ...
         add more
-
         */
+        myFW.endRecord();
         finish = true;
         myDisplay.printResign(isWhiteTurn);
-    }
-
-    /**
-     * MOVED TO SUB-CASE OF DEFAULT CASE
-     */
-    private void switchMove() {
-        /* show valid move list - not finished */
-        //myDisplay.printMove();
-    }
-
-    /**
-     * List all of the valid moves in the square
-     */
-    private void switchSquare() {
-        /* show valid move list of specific square - not finished */
-        myDisplay.printSquare();
     }
 
     /**
@@ -149,6 +127,8 @@ public class Game {
      */
     private void switchUCI(String input) {
         /* not finished
+
+        0. Valid check of the input
 
         1-1. If it's correct UCI command
             -> Interpret UCI command to Piece & Position
@@ -189,96 +169,188 @@ public class Game {
         // remove all whitespaces from the input
         input = input.replace(" ", "");
 
-        // square
-        ArrayList<Position> squareList = new ArrayList<>();
-        if (input.contains(",")){
-            Position p1 = convertUCI(input.substring(0, 2));
-            Position p2 = convertUCI(input.substring(3, 5));
-
-            // get every position
-            int minRow = Math.min(p1.getRow(), p2.getRow());
-            int maxRow = Math.max(p1.getRow(), p2.getRow());
-            int minCol = Math.min(p1.getCol(), p2.getCol());
-            int maxCol = Math.max(p1.getCol(), p2.getCol());
-
-            for (int i = maxRow; i >= minRow; i--){
-                for (int j = minCol; j <= maxCol; j++){
-                    squareList.add(new Position( i, j));
-                }
-            }
-            // check validity
-            for (int i = 0; i < squareList.size(); i++) {
-                if (myBoard[squareList.get(i).getRow()][squareList.get(i).getCol()] == null){
-                    System.out.println(squareList.get(i)+ ": no piece in this position");
-                } else {
-                    System.out.println(squareList.get(i)+ ": " +
-                            myBoard[squareList.get(i).getRow()][squareList.get(i).getCol()].getValidMoveList(myBoard));
-                }
-            }
-        }
-
         switch (input.length()) {
             case 2:
-                /*
-                1. check validity (piece) "CHECK THE TURN OF COLOR"
-                2-1. true -> call the piece's getValidMoveList
-                2-2. false -> show message & skip the other steps
-                 */
-                Position piece = convertUCI(input);
-                myDisplay.printMove(myBoard[piece.getRow()][piece.getCol()].getValidMoveList(myBoard));
+                switchGetMoveList(input);
                 break;
             case 4:
-                /*
-                1. check validity (piece + new position) "CHECK THE TURN OF COLOR"
-                2-1: true -> call the piece's move method
-                2-2: false -> show message & skip the other steps
-                 */
-                Position piece2 = convertUCI(input.substring(0, 2));
-                Position newPosition = convertUCI(input.substring(2, 4));
-                boolean moveOk = myBoard[piece2.getRow()][piece2.getCol()].move(newPosition, myBoard);
-                myBoard[newPosition.getRow()][newPosition.getCol()] = myBoard[piece2.getRow()][piece2.getCol()];
-                myBoard[piece2.getRow()][piece2.getCol()] = null;
-                myDisplay.printUCI(moveOk);
-
+                switchMove(input);
                 break;
             case 5:
-                /*
-                1. check validity (piece + new position + promotion)
-                2-1: true -> call the piece's move method and promotion
-                */
+                if (input.contains(","))
+                    switchSquare(input);
+                else
+                    switchPromotion(input);
                 break;
             default:
                 /* show invalid command message and finish the cycle to get it again */
-                break;
         }
+    }
 
-//        /* test code */
-//        if (input.equals("d1d5")) {
-//            if (myBoard[7][3].move(new Position(3, 3), myBoard)) {
-//                myBoard[3][3] = myBoard[7][3];
-//                myBoard[7][3] = null;
-//            }
-//            System.out.println(myBoard[7][3].getValidMoveList(myBoard));
-//        }
-//
-//        System.out.println("OK");
+    private void switchGetMoveList(String input) {
+        Position piece = convertUCI(input);
+        if (myBoard[piece.getRow()][piece.getCol()] != null)
+            myDisplay.printMove(input, myBoard[piece.getRow()][piece.getCol()].getValidMoveList(myBoard));
+        else
+            myDisplay.printMoveFail();
+    }
 
+    private void switchMove(String input) {
+        boolean moveOK = false;
+        int errorCode = 0;
+        Position piece2 = convertUCI(input.substring(0, 2));
+        Position newPosition = convertUCI(input.substring(2, 4));
+        // null check
+        if (myBoard[piece2.getRow()][piece2.getCol()] != null) {
+            // team check
+            if (myBoard[piece2.getRow()][piece2.getCol()].isWhite == isWhiteTurn) {
+                // move check & actual move sequence
+                moveOK = myBoard[piece2.getRow()][piece2.getCol()].move(newPosition, myBoard);
+                if (moveOK) {
+                    myBoard[newPosition.getRow()][newPosition.getCol()] = myBoard[piece2.getRow()][piece2.getCol()];
+                    myBoard[piece2.getRow()][piece2.getCol()] = null;
+//                    myFW.recordMove(input);
+                    isWhiteTurn = !isWhiteTurn;
+                    isTurnChanged = true;
+                }
+            } else {
+                errorCode = 1; // team not matched
+            }
+        } else {
+            errorCode = 2; // piece is not exist (null)
+        }
+        myDisplay.printUCI(moveOK, errorCode);
     }
 
     /**
-     * interpret UCI command to use
+     * List all of the valid moves in the square
+     */
+    private void switchSquare(String input) {
+        /* show valid move list of specific square - not finished
+        1. valid check
+        2. call getValidMoveList() method from each of the objects
+        3-1. call printSquare() method in display module
+        3-2. pass the ArrayList of the valid moves as a parameter
+        */
+
+        ArrayList<Position> squareList = new ArrayList<>();
+        Position p1 = convertUCI(input.substring(0, 2));
+        Position p2 = convertUCI(input.substring(3, 5));
+
+        // get every position
+        int minRow = Math.min(p1.getRow(), p2.getRow());
+        int maxRow = Math.max(p1.getRow(), p2.getRow());
+        int minCol = Math.min(p1.getCol(), p2.getCol());
+        int maxCol = Math.max(p1.getCol(), p2.getCol());
+
+        for (int i = maxRow; i >= minRow; i--) {
+            for (int j = minCol; j <= maxCol; j++) {
+                // null check
+                if (myBoard[i][j] != null) {
+                    // team check
+                    if (myBoard[i][j].isWhite == isWhiteTurn) {
+                        squareList.add(new Position(i, j));
+                    }
+                }
+            }
+        }
+        // check validity
+        for (Position p : squareList) {
+            if (myBoard[p.getRow()][p.getCol()].getValidMoveList(myBoard).size() != 0){
+                myDisplay.printSquare(p, myBoard[p.getRow()][p.getCol()].getValidMoveList(myBoard));
+            }
+        }
+    }
+
+    private void switchPromotion(String input) {
+        /*
+        THIS METHOD REQUIRES PAWN'S PROMOTION CODE FIRST
+        WORK ON IT LATER WHEN THE PROMOTION IS COMPLETED
+
+        1. check validity (piece + new position + promotion)
+        2-1: true -> call the piece's move method and promotion
+        */
+
+
+        /*
+        THIS METHOD REQUIRES PAWN'S PROMOTION CODE FIRST
+        WORK ON IT LATER WHEN THE PROMOTION IS COMPLETED
+
+        1. check validity (piece + new position + promotion)
+        2-1: true -> call the piece's move method and promotion
+
+        */
+        Position piece3 = convertUCI(input.substring(0, 2));
+        Position newPosition2 = convertUCI(input.substring(2, 4));
+        Piece selectedPiece = myBoard[piece3.getRow()][piece3.getCol()];
+        boolean moveOk2 = selectedPiece.move(newPosition2, myBoard);
+        boolean promoteOk = false;
+        if (selectedPiece instanceof Pawn) {
+            Pawn p = (Pawn) selectedPiece;
+            promoteOk = p.promote(newPosition2, myBoard);
+        }
+
+        if (moveOk2 && promoteOk) {
+            Piece promotedPiece =
+                    createPromotedPiece(input.substring(4, 5), selectedPiece.isWhite, newPosition2);
+            movePiece(promotedPiece, piece3, newPosition2);
+            // myFW.recordMove(input);
+            isWhiteTurn = !isWhiteTurn;
+            isTurnChanged = true;
+        }
+        // myDisplay.printUCI(moveOk2 && promoteOk);
+    }
+
+    /**
+     * ASCII code used (a = 97)
+     * String -> Position
+     * <p>TRY-CATCH BLOCK REQUIRED
      */
     private Position convertUCI(String input) {
-        /* not finished yet - try / catch */
-        int col = input.charAt(0) - 97;
-        int row = 8 - Integer.parseInt(
-                input.substring(1, 2));
-
+        int row = 8 - Integer.parseInt(input.substring(1, 2)), col = input.charAt(0) - 97;
         return new Position(row, col);
     }
 
+    /**
+     * ASCII code used (a = 97)
+     * Position -> String
+     * <p>TRY-CATCH BLOCK REQUIRED
+     */
+    private String convertUCI(Position position) {
+        char row = (char) (8 - position.getRow());
+        char col = (char) (position.getCol() + 97);
+
+        return Character.toString(col) + row;
+    }
+
+    private void movePiece(Piece pieceToMove, Position src, Position dest) {
+        myBoard[dest.getRow()][dest.getCol()] = pieceToMove;
+        myBoard[src.getRow()][src.getCol()] = null;
+    }
+
+    private Piece createPromotedPiece(String input, boolean isWhite, Position dest) {
+        Piece promotedPiece;
+        switch (input) {
+            case "q":
+                promotedPiece = new Queen("Queen", isWhite, new Position(dest.getRow(), dest.getCol()));
+                break;
+            case "k":
+                promotedPiece = new Knight("Knight", isWhite, new Position(dest.getRow(), dest.getCol()));
+                break;
+            case "r":
+                promotedPiece = new Rook("Rook", isWhite, new Position(dest.getRow(), dest.getCol()));
+                break;
+            case "b":
+                promotedPiece = new Bishop("Bishop", isWhite, new Position(dest.getRow(), dest.getCol()));
+                break;
+            default:
+                promotedPiece = null;
+        }
+        return promotedPiece;
+    }
 
 }
+
 /*
 00 01 02 03 04 05 06 07  0  8
 10 11 12 13 14 15 16 17  1  7

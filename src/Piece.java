@@ -1,13 +1,6 @@
 import java.util.ArrayList;
 
 public abstract class Piece {
-    // Constants
-    /**
-     * protected position value array that child classes' constructor can use to set its starting position
-     * will be filled with actual data...
-     */
-    protected final Position[] START_POSITION = null;
-
     // Fields
     /**
      * String type:
@@ -26,7 +19,7 @@ public abstract class Piece {
     protected boolean isWhite;
     protected Position position;
 
-    protected Piece(String type, boolean isWhite, Position position) {
+    public Piece(String type, boolean isWhite, Position position) {
         this.type = type;
         this.isWhite = isWhite;
         this.position = position;
@@ -40,7 +33,7 @@ public abstract class Piece {
      * if other player's piece is occupying the destination, your piece will capture
      *
      * @param newPosition is the position that this piece will move
-     * @param board is present board status to check
+     * @param board       is present board status to check
      */
     protected abstract boolean move(Position newPosition, Piece[][] board);
 
@@ -53,11 +46,9 @@ public abstract class Piece {
      */
     protected boolean isValidMove(Position newPosition, Piece[][] board) {
         boolean result = false;
-
-        if (newPosition.getRow() >= 0 && newPosition.getRow() <= 7
-                && newPosition.getCol() >= 0 && newPosition.getCol() <= 7)
-            result = true;
-
+        ArrayList<Position> validMoveList = getValidMoveList(board);
+        for (Position position : validMoveList)
+            if (position.equals(newPosition)) result = true;
         return result;
     }
 
@@ -66,11 +57,15 @@ public abstract class Piece {
      *
      * @return ArrayList of available Position objects list
      */
-    public abstract ArrayList<Position> getValidMoveList(Piece[][] board);
+    protected abstract ArrayList<Position> getValidMoveList(Piece[][] board);
+
+    protected boolean isInRange(int row, int col) {
+        if (row >= 0 && row < 8 && col >= 0 && col < 8) return true;
+        return false;
+    }
 
     @Override
     public abstract String toString();
-
 
     // Accessor
 
@@ -89,16 +84,12 @@ public abstract class Piece {
     }
 
     /**
-     * No setter for this.type
-     * -> after the piece object created, the type aren't gonna change (except Pawn)
-     * -> set the type on the initialization (constructor)
+     * No setter for this.type -> after the piece object created, the type aren't gonna change (except
+     * Pawn) -> set the type on the initialization (constructor)
      *
-     * No setter for this.position
-     * -> only move() method can change the position of the piece for the safety
-     * -> do not try to set a piece's position manually from outside of the object
+     * <p>No setter for this.position -> only move() method can change the position of the piece for
+     * the safety -> do not try to set a piece's position manually from outside of the object
      *
      * @author Richard
      */
-
 }
-
