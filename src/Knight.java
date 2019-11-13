@@ -18,15 +18,6 @@ public class Knight extends Piece {
     }
 
     @Override
-    protected boolean isValidMove(Position newPosition, Piece[][] board) {
-        boolean result = false;
-        ArrayList<Position> validMoveList = getValidMoveList(board);
-        for (Position position : validMoveList)
-            if (position.equals(newPosition)) result = true;
-        return result;
-    }
-
-    @Override
     public ArrayList<Position> getValidMoveList(Piece[][] board) {
         ArrayList<Position> validPositions = new ArrayList<>();
         int rowPosition = this.position.getRow(), colPosition = this.position.getCol();

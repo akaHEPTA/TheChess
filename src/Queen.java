@@ -25,19 +25,6 @@ public class Queen extends Piece {
     }
 
     /**
-     * @param newPosition is the position that this piece will move
-     * @param board       is present board data
-     * @return is boolean type value that move command is valid or not
-     */
-    @Override
-    protected boolean isValidMove(Position newPosition, Piece[][] board) {
-        boolean result = false;
-        ArrayList<Position> validMoveList = getValidMoveList(board);
-        for (Position position : validMoveList) if (position.equals(newPosition)) result = true;
-        return result;
-    }
-
-    /**
      * @param board is present board data
      * @return is ArrayList that contains valid moves
      */
@@ -63,17 +50,14 @@ public class Queen extends Piece {
         boolean isBlocked = false;
 
         for (int i = 1; i < 8; i++) {
-            int rowPosition = this.position.getRow() + i * rowMove;
-            int colPosition = this.position.getCol() + i * colMove;
+            int rowP = this.position.getRow() + i * rowMove, colP = this.position.getCol() + i * colMove;
 
-            if (isInRange(rowPosition, colPosition) && !isBlocked) {
-                if (board[rowPosition][colPosition] == null)
-                    validPositions.add(new Position(rowPosition, colPosition));
-                else if (board[rowPosition][colPosition].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition, colPosition));
+            if (isInRange(rowP, colP) && !isBlocked) {
+                if (board[rowP][colP] == null) validPositions.add(new Position(rowP, colP));
+                else if (board[rowP][colP].isWhite != this.isWhite) {
+                    validPositions.add(new Position(rowP, colP));
                     isBlocked = true;
-                } else
-                    isBlocked = true;
+                } else isBlocked = true;
             }
         }
 

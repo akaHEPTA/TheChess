@@ -55,10 +55,13 @@ public class Game {
         myBoard[7][6] = new Knight("Knight", true, new Position(7, 6));
         myBoard[7][7] = new Rook("Rook", true, new Position(7, 7));
 
-        for (int i = 0; i < 8; i++) {
-            myBoard[1][i] = new Pawn("Pawn", false, new Position(1, i));
-            myBoard[6][i] = new Pawn("Pawn", true, new Position(6, i));
-        }
+//        for (int i = 0; i < 8; i++) {
+//            myBoard[1][i] = new Pawn("Pawn", false, new Position(1, i));
+//            myBoard[6][i] = new Pawn("Pawn", true, new Position(6, i));
+//        }
+
+        /* TEST CODE */
+
     }
 
     /**
@@ -309,9 +312,7 @@ public class Game {
      * <p>TRY-CATCH BLOCK REQUIRED
      */
     private String convertUCI(Position position) {
-        char row = (char) (8 - position.getRow());
-        char col = (char) (position.getCol() + 97);
-
+        char row = (char) (8 - position.getRow()), col = (char) (position.getCol() + 97);
         return Character.toString(col) + row;
     }
 

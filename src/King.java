@@ -8,7 +8,7 @@ public class King extends Piece {
 
     /**
      * @param newPosition is the position that this piece will move
-     * @param board is present board data
+     * @param board       is present board data
      * @return is boolean type value that move command works or not
      */
     @Override
@@ -24,86 +24,35 @@ public class King extends Piece {
     }
 
     /**
-     * @param newPosition is the position that this piece will move
-     * @param board is present board data
-     * @return is boolean type value that move command is valid or not
-     */
-    @Override
-    protected boolean isValidMove(Position newPosition, Piece[][] board) {
-        boolean result = false;
-        ArrayList<Position> validMoveList = getValidMoveList(board);
-        for (Position position : validMoveList)
-            if (position.equals(newPosition)) result = true;
-        return result;
-    }
-
-    /**
      * @param board is present board data
      * @return is ArrayList that contains valid moves
      */
     @Override
     public ArrayList<Position> getValidMoveList(Piece[][] board) {
         ArrayList<Position> validPositions = new ArrayList<>();
-        int rowPosition = this.position.getRow(), colPosition = this.position.getCol();
 
-        // Forward
-        if (rowPosition - 1 >= 0 && rowPosition - 1 < 8)
-            if (board[rowPosition - 1][colPosition] == null
-                    || board[rowPosition - 1][colPosition].isWhite != this.isWhite) {
-                validPositions.add(new Position(rowPosition - 1, colPosition));
-            }
+        validPositions.add(getValidWay(board, -1, 0));
+        validPositions.add(getValidWay(board, -1, +1));
+        validPositions.add(getValidWay(board, 0, +1));
+        validPositions.add(getValidWay(board, 1, +1));
+        validPositions.add(getValidWay(board, 1, 0));
+        validPositions.add(getValidWay(board, 1, -1));
+        validPositions.add(getValidWay(board, 0, -1));
+        validPositions.add(getValidWay(board, -1, -1));
 
-        // Right forward diagonal
-            if (rowPosition - 1 >= 0 && rowPosition - 1 < 8 && colPosition + 1 >= 0 && colPosition +1 < 8)
-                if (board[rowPosition - 1][colPosition + 1] == null
-                        || board[rowPosition - 1][colPosition + 1].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition - 1, colPosition +1));
-                }
-
-        // Right
-            if (colPosition + 1 >= 0 && colPosition + 1 < 8)
-               if (board[rowPosition][colPosition + 1] == null
-                        || board[rowPosition][colPosition + 1].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition, colPosition +1));
-                }
-
-        // Right back diagonal
-            if (rowPosition + 1 >= 0 && rowPosition + 1 < 8 && colPosition +1 >= 0 && colPosition +1 < 8)
-                if (board[rowPosition + 1][colPosition +1] == null
-                        || board[rowPosition +1][colPosition +1].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition +1, colPosition +1));
-                }
-
-        // Back
-            if (rowPosition +1 >= 0 && rowPosition +1 < 8)
-                if (board[rowPosition +1][colPosition] == null
-                        || board[rowPosition +1][colPosition].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition +1, colPosition));
-                }
-
-        // Left back diagonal
-            if (rowPosition +1 >= 0 && rowPosition +1 < 8 && colPosition -1 >= 0 && colPosition -1 < 8)
-                if (board[rowPosition +1][colPosition -1] == null
-                        || board[rowPosition +1][colPosition -1].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition +1, colPosition -1));
-                }
-
-        // Left
-            if (colPosition -1 >= 0 && colPosition -1 < 8)
-                if (board[rowPosition][colPosition -1] == null
-                        || board[rowPosition][colPosition -1].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition, colPosition -1));
-                }
-
-        // Left forward diagonal
-
-            if (rowPosition -1 >= 0 && rowPosition -1 < 8 && colPosition -1 >= 0 && colPosition -1 < 8)
-                if (board[rowPosition -1][colPosition -1] == null
-                        || board[rowPosition -1][colPosition -1].isWhite != this.isWhite) {
-                    validPositions.add(new Position(rowPosition -1, colPosition -1));
-                }
+        while (validPositions.contains(null))
+            validPositions.remove(null);
 
         return validPositions;
+    }
+
+    protected Position getValidWay(Piece[][] board, int rowMove, int colMove) {
+        int rowP = this.position.getRow() + rowMove, colP = this.position.getCol() + colMove;
+
+        if (isInRange(rowP, colP) && (board[rowP][colP] == null || board[rowP][colP].isWhite != this.isWhite))
+            return new Position(rowP, colP);
+        else
+            return null;
     }
 
     @Override
