@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 public class Queen extends Piece {
 
-    public Queen(String type, boolean isWhite, Position position) {
-        super(type, isWhite, position);
-    }
+  public Queen(String type, boolean isWhite, Position position) {
+    super(type, isWhite, position);
+  }
 
     /**
      * @param newPosition is the position that this piece will move
@@ -21,6 +21,8 @@ public class Queen extends Piece {
         }
         return result;
     }
+    return result;
+  }
 
     /**
      * @param newPosition is the position that this piece will move
@@ -75,15 +77,18 @@ public class Queen extends Piece {
                     isBlocked = true;
             }
         }
+    }
 
         return validPositions;
     }
 
-    @Override
-    public String toString() {
-        return null;
-    }
+    return validPositions;
+  }
 
+  @Override
+  public String toString() {
+    return null;
+  }
 }
 
 /*
