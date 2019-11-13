@@ -225,6 +225,8 @@ public class Game {
     /**
      * List all of the valid moves in the square
      */
+
+        
     private void switchSquare(String input) {
         /* show valid move list of specific square - not finished
         1. valid check
@@ -245,11 +247,15 @@ public class Game {
 
         for (int i = maxRow; i >= minRow; i--) {
             for (int j = minCol; j <= maxCol; j++) {
-                if (myBoard[i][j] != null)
-                    squareList.add(new Position(i, j));
+                // null check
+                if (myBoard[i][j] != null) {
+                    // team check
+                    if (myBoard[i][j].isWhite == isWhiteTurn) {
+                        squareList.add(new Position(i, j));
+                    }
+                }
             }
         }
-
         // check validity
         for (Position p : squareList) {
             myDisplay.printMove(convertUCI(p), myBoard[p.getRow()][p.getCol()].getValidMoveList(myBoard));
@@ -266,14 +272,6 @@ public class Game {
         */
 
 
-        /*
-        THIS METHOD REQUIRES PAWN'S PROMOTION CODE FIRST
-        WORK ON IT LATER WHEN THE PROMOTION IS COMPLETED
-
-        1. check validity (piece + new position + promotion)
-        2-1: true -> call the piece's move method and promotion
-
-        */
         Position piece3 = convertUCI(input.substring(0, 2));
         Position newPosition2 = convertUCI(input.substring(2, 4));
         Piece selectedPiece = myBoard[piece3.getRow()][piece3.getCol()];

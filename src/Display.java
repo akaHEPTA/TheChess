@@ -131,8 +131,8 @@ public class Display {
         printNewLine();
     }
 
-    public void printSquare() {
-        /* not finished */
+    public void printSquare(Position piece, ArrayList<Position> Positions) {
+        System.out.println(piece + ": " + Positions);
     }
 
     public void printUCI(boolean moveOK, int code) {
