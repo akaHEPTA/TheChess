@@ -34,7 +34,7 @@ public class Position {
 
     @Override
     public String toString() {
-        return Character.toString(97 + col) + (8 - row);
+        return Character.toString((char) (97 + col)) + (8 - row);
     }
 
     @Override

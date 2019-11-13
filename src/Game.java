@@ -206,6 +206,7 @@ public class Game {
                 2-2. false -> show message & skip the other steps
                  */
                 Position piece = convertUCI(input);
+
                 myDisplay.printMove(myBoard[piece.getRow()][piece.getCol()].getValidMoveList(myBoard));
                 break;
             case 4:
@@ -220,7 +221,7 @@ public class Game {
                 if (moveOk) {
                     myBoard[newPosition.getRow()][newPosition.getCol()] = myBoard[piece2.getRow()][piece2.getCol()];
                     myBoard[piece2.getRow()][piece2.getCol()] = null;
-                    myFW.recordMove(input);
+//                    myFW.recordMove(input);
                     isWhiteTurn = !isWhiteTurn;
                     isTurnChanged = true;
                 }
@@ -242,16 +243,16 @@ public class Game {
                 break;
         }
 
-//        /* test code */
-//        if (input.equals("d1d5")) {
-//            if (myBoard[7][3].move(new Position(3, 3), myBoard)) {
-//                myBoard[3][3] = myBoard[7][3];
-//                myBoard[7][3] = null;
-//            }
-//            System.out.println(myBoard[7][3].getValidMoveList(myBoard));
-//        }
-//
-//        System.out.println("OK");
+        /* test code */
+        if (input.equals("d1d5")) {
+            if (myBoard[7][3].move(new Position(3, 3), myBoard)) {
+                myBoard[3][3] = myBoard[7][3];
+                myBoard[7][3] = null;
+            }
+            System.out.println(myBoard[7][3].getValidMoveList(myBoard));
+        }
+
+        System.out.println("OK");
 
     }
 
