@@ -3,14 +3,6 @@ import java.util.ArrayList;
 
 public class Display {
     // Constants
-    /**
-     * first index : 0 for white / 1 for black second index : 0 for pawn / 1 for kight / 2 for bishop
-     * / 3 for rook / 4 for queen / 5 for king
-     */
-    private static final char[][] SYMBOLS = {
-            {'♙', '♘', '♗', '♖', '♕', '♔'}, {'♟', '♞', '♝', '♜', '♛', '♚'}
-    };
-
     private static final char WHITE_PAWN = '♙';
     private static final char WHITE_KNIGHT = '♘';
     private static final char WHITE_BISHOP = '♗';
@@ -91,8 +83,7 @@ public class Display {
             }
             System.out.println(" " + (8 - i));
         }
-        System.out.println("\na  b  c  d  e  f  g  h");
-        System.out.println();
+        System.out.println("\na  b  c  d  e  f  g  h\n");
     }
 
     /**
@@ -110,10 +101,10 @@ public class Display {
         System.out.println("* type 'help' for help");
         System.out.println("* type 'board' to see the board again");
         System.out.println("* type 'resign' to resign");
-//         System.out.println("* type 'moves' to list all possible moves");
+        System.out.println("* type 'moves' to list all possible moves");
         System.out.println("* type a square (e.g. b1, e2) to list possible moves for that square");
         System.out.println("* type UCI (e.g. b1c3, e7e8q) to make a move");
-        System.out.println();
+        printNewLine();
     }
 
     public void printResign(boolean isWhiteTurn) {
@@ -121,18 +112,23 @@ public class Display {
         System.out.println((isWhiteTurn ? "White" : "Black") + " resigned. Game over.");
     }
 
-    public void printMove(String piece, ArrayList<Position> Positions) {
-        System.out.println("Valid Moves [" + piece + "] : " + Positions);
-        System.out.println();
+    public void printMoves(String piece, ArrayList<Position> Positions) {
+        System.out.println(piece + " : " + Positions);
     }
 
-    public void printMoveFail() {
-        System.out.println("[!] Invalid Position : There is no Piece");
-        printNewLine();
-    }
-
-    public void printSquare(Position piece, ArrayList<Position> Positions) {
-        System.out.println(piece + ": " + Positions);
+    public void printMovesFail(int code) {
+        System.out.print("[!] Invalid Position");
+        switch (code) {
+            case 0:
+                System.out.println(" : Out of board range");
+                break;
+            case 1:
+                System.out.println(" : There is no piece");
+                break;
+            case 2:
+                System.out.println(" : This piece is not your team");
+            default:
+        }
     }
 
     public void printUCI(boolean moveOK, int code) {
@@ -141,24 +137,20 @@ public class Display {
         else {
             System.out.print("[!] Invalid Move");
             switch (code) {
-                case 1:
-                    System.out.println(" : The piece is not your team");
+                case 0:
+                    System.out.println(" : Out of board range");
                     break;
-                case 2:
+                case 1:
                     System.out.println(" : There is no piece");
                     break;
+                case 2:
+                    System.out.println(" : The piece is not your team");
+                    break;
+                default:
+                    System.out.println();
             }
         }
         printNewLine();
-    }
-
-
-    public void printUCIFail(String message) {
-        System.out.println("[!] Invalid Move : " + message);
-    }
-
-    public void printInvalidPieceMove(boolean isWhiteTurn) {
-        System.out.println("You can move only " + (isWhiteTurn ? "white" : "black") + " pieces");
     }
 
     public void printNewLine() {
