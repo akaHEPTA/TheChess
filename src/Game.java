@@ -56,7 +56,6 @@ public class Game {
       myBoard[1][i] = new Pawn("Pawn", false, new Position(1, i));
       myBoard[6][i] = new Pawn("Pawn", true, new Position(6, i));
     }
-    myBoard[3][5] = new Pawn("Pawn", true, new Position(3, 5));
 
     /* TEST CODE */
 
@@ -214,11 +213,26 @@ public class Game {
         }
         if (moveOK) {
 
-          // Check if the Pawn moves first two.
+          // Check if the Pawn moves two at the first time.
           if (isFirstMoveTwo(myBoard[piece2.getRow()][piece2.getCol()], piece2, newPosition)) {
             Pawn p = (Pawn) (myBoard[piece2.getRow()][piece2.getCol()]);
             p.setIsFirstMoveTwo(counter);
             System.out.println(counter);
+          }
+
+          // Check if tha Pawn do en passant
+          if (isEnPassant(myBoard[piece2.getRow()][piece2.getCol()], piece2, newPosition)) {
+            System.out.println("Wow, En passant!");
+            // left side
+            //   capture opponent piece
+            if (piece2.getCol() - newPosition.getCol() == 1) {
+              myBoard[piece2.getRow()][piece2.getCol() - 1] = null;
+            }
+            // right side
+            //   capture opponent piece
+            if (newPosition.getCol() - piece2.getCol() == 1) {
+              myBoard[piece2.getRow()][piece2.getCol() + 1] = null;
+            }
           }
 
           myBoard[newPosition.getRow()][newPosition.getCol()] =
@@ -338,6 +352,13 @@ public class Game {
     } else {
       return src.getRow() == 1 && dest.getRow() == 3;
     }
+  }
+
+  private boolean isEnPassant(Piece pieceToMove, Position src, Position dest) {
+    if (!(pieceToMove instanceof Pawn)) return false;
+    return myBoard[dest.getRow()][dest.getCol()] == null
+        && Math.abs(src.getRow() - dest.getRow()) == 1
+        && Math.abs(src.getCol() - dest.getCol()) == 1;
   }
 
   private Piece createPromotedPiece(String input, boolean isWhite, Position dest) {

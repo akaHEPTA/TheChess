@@ -149,7 +149,7 @@ public class Pawn extends Piece {
     // Pawn didn't move two.
     if ((pp.isFirstMoveTwo == 0)) return false;
 
-    return currentCounter - pp.isFirstMoveTwo == 1;
+    return (isWhite != p.isWhite) && (currentCounter - pp.isFirstMoveTwo == 1);
   }
 
   public void setIsFirstMoveTwo(int isFirstMoveTwo) {
