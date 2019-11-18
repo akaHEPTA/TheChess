@@ -107,7 +107,6 @@ public class Display {
     }
 
     public void printResign(boolean isWhiteTurn) {
-        /* not finished */
         System.out.println((isWhiteTurn ? "White" : "Black") + " resigned. Game over.");
     }
 
@@ -157,13 +156,12 @@ public class Display {
         System.out.println("[!] Invalid Value");
     }
 
-
-    public void printCheck() {
-        System.out.println("\n[!] Check : Move the King");
+    public void printCheck(Piece piece) {
+        System.out.println("\n[!] Check : Move the King - attacker : " + piece);
     }
 
     public void printCheckmate() {
-        System.out.println("[!] Checkmate : Game Over");
+        System.out.println("\n[!] Checkmate : Game Over");
     }
 
     public void printNewLine() {

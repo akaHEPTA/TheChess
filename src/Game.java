@@ -117,16 +117,17 @@ public class Game {
                     if (temp.getValidMoveList(myBoard).contains(white.position)) {
                         if (white.getValidMoveList(myBoard).isEmpty()) {
                             finish = true;
+                            myFW.endRecord();
                             myDisplay.printCheckmate();
                         } else {
-                            myDisplay.printCheck();
-                            System.out.println(myBoard[i][j]);
+                            myDisplay.printCheck(myBoard[i][j]);
                         }
                     } else if (temp.getValidMoveList(myBoard).contains(black.position)) {
                         if (black.getValidMoveList(myBoard).isEmpty()) {
                             finish = true;
+                            myFW.endRecord();
                             myDisplay.printCheckmate();
-                        } else myDisplay.printCheck();
+                        } else myDisplay.printCheck(myBoard[i][j]);
                     }
 
                 }
@@ -169,13 +170,6 @@ public class Game {
      * finish the game and score the players show the result of this game
      */
     private void switchResign() {
-        /* not finished
-        Game over command
-        1. check the turn and make score data
-        2. finish = true;
-        ...
-        add more
-        */
         myFW.endRecord();
         finish = true;
         myDisplay.printResign(isWhiteTurn);
@@ -312,6 +306,7 @@ public class Game {
             Piece temp = myBoard[pos.getRow()][pos.getCol()];
             if (temp instanceof Pawn && ((Pawn) temp).setPromotion() && switchMove(input.substring(0, 4))) {
                 myBoard[newPos.getRow()][newPos.getCol()] = createPromotedPiece(input.substring(4, 5), temp.getPosition());
+                /* file writer */
                 trigger();
             }
         } else myDisplay.printPatternUnmatch();

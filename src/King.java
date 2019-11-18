@@ -22,9 +22,6 @@ public class King extends Piece {
     public ArrayList<Position> getValidMoveList(Piece[][] board) {
         ArrayList<Position> validPositions = new ArrayList<>();
 
-        Piece king = board[this.position.getRow()][this.position.getCol()];
-        board[this.position.getRow()][this.position.getCol()] = null;
-
         validPositions.add(getValidWay(board, -1, 0));
         validPositions.add(getValidWay(board, -1, +1));
         validPositions.add(getValidWay(board, 0, +1));
@@ -37,7 +34,6 @@ public class King extends Piece {
         if (!moved) validPositions.addAll(getCastling(board));
 
         while (validPositions.contains(null)) validPositions.remove(null);
-        board[this.position.getRow()][this.position.getCol()] = king;
 
         return validPositions;
     }
@@ -60,19 +56,25 @@ public class King extends Piece {
 
     private Position getValidWay(Piece[][] board, int rowMove, int colMove) {
         int rowP = this.position.getRow() + rowMove, colP = this.position.getCol() + colMove;
+        Position newPos = new Position(rowP, colP);
+
+        Piece king = board[this.position.getRow()][this.position.getCol()];
+        board[this.position.getRow()][this.position.getCol()] = null;
 
         if (isInRange(rowP, colP) && (board[rowP][colP] == null || board[rowP][colP].isWhite != this.isWhite)) {
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     Piece temp = board[i][j];
-                    Position newPos = new Position(rowP, colP);
                     if (temp != null && temp.isWhite != this.isWhite && temp.getValidMoveList(board).contains(newPos)) {
+                        board[this.position.getRow()][this.position.getCol()] = king;
                         return null;
                     }
                 }
             }
+            board[this.position.getRow()][this.position.getCol()] = king;
             return new Position(rowP, colP);
         }
+        board[this.position.getRow()][this.position.getCol()] = king;
         return null;
     }
 
