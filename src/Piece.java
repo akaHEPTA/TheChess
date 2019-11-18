@@ -53,7 +53,11 @@ public abstract class Piece {
     protected boolean isValidMove(Position newPosition, Piece[][] board) {
         boolean result = false;
         ArrayList<Position> validMoveList = getValidMoveList(board);
-        for (Position position : validMoveList) if (position.equals(newPosition)) result = true;
+        for (Position position : validMoveList)
+            if (position.equals(newPosition)) {
+                result = true;
+                break;
+            }
         return result;
     }
 
@@ -65,8 +69,7 @@ public abstract class Piece {
     protected abstract ArrayList<Position> getValidMoveList(Piece[][] board);
 
     protected boolean isInRange(int row, int col) {
-        if (row >= 0 && row < 8 && col >= 0 && col < 8) return true;
-        return false;
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
 
     @Override

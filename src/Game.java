@@ -312,7 +312,6 @@ public class Game {
             Piece temp = myBoard[pos.getRow()][pos.getCol()];
             if (temp instanceof Pawn && ((Pawn) temp).setPromotion() && switchMove(input.substring(0, 4))) {
                 myBoard[newPos.getRow()][newPos.getCol()] = createPromotedPiece(input.substring(4, 5), temp.getPosition());
-                trigger();
             }
         } else myDisplay.printPatternUnmatch();
     }
@@ -334,16 +333,16 @@ public class Game {
         Piece promotedPiece;
         switch (input) {
             case "b":
-                promotedPiece = new Bishop("Bishop", isWhiteTurn, dest);
+                promotedPiece = new Bishop("Bishop", !isWhiteTurn, dest);
                 break;
             case "k":
-                promotedPiece = new Knight("Knight", isWhiteTurn, dest);
+                promotedPiece = new Knight("Knight", !isWhiteTurn, dest);
                 break;
             case "q":
-                promotedPiece = new Queen("Queen", isWhiteTurn, dest);
+                promotedPiece = new Queen("Queen", !isWhiteTurn, dest);
                 break;
             case "r":
-                promotedPiece = new Rook("Rook", isWhiteTurn, dest);
+                promotedPiece = new Rook("Rook", !isWhiteTurn, dest);
                 break;
             default:
                 promotedPiece = null;
