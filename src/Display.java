@@ -148,6 +148,10 @@ public class Display {
         }
     }
 
+    public void printGameEnd(boolean isWhiteTurn) {
+        System.out.println((isWhiteTurn ? "White" : "Black") + " Win. Game over.");
+    }
+
     public void printPromotionRequired() {
         System.out.println("[!] Promotion command required (e.g. e7e8q)");
     }

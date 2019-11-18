@@ -26,7 +26,6 @@ public abstract class Piece {
     }
 
     // Methods
-
     /**
      * move the position of this piece - common method for the all pieces
      * this move method has no safety codes, so you must call isValidMove() for validity check
@@ -74,8 +73,6 @@ public abstract class Piece {
     public String toString() {
         return this.position + ", " + this.type;
     }
-
-    // Accessor
 
     /**
      * @return the piece's type

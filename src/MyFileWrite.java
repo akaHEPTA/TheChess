@@ -1,7 +1,5 @@
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,13 +11,17 @@ public class MyFileWrite {
     private PrintWriter myPW;
     private int counter = 1;
     private File newFile;
-    private static final String newFileName = "./log/temp.txt";
+    private static final String newFileName = "./log/log.txt";
     private SimpleDateFormat time;
 
     public MyFileWrite() throws IOException {
-        setFile();
         initializeObjects();
-        myPW.println(time.format(new Date(System.currentTimeMillis())));
+        setFile();
+    }
+
+    private void initializeObjects() throws IOException {
+        myPW = new PrintWriter(new BufferedWriter(new FileWriter(newFileName)));
+        time = new SimpleDateFormat("MM/dd/yyyy_hh:mm:ss");
     }
 
     private void setFile() {
@@ -30,11 +32,7 @@ public class MyFileWrite {
         } catch (IOException e) {
             System.out.println("[!] Log module is offline");
         }
-    }
-
-    private void initializeObjects() throws IOException {
-        myPW = new PrintWriter(new BufferedWriter(new FileWriter(newFileName)));
-        time = new SimpleDateFormat("MM/dd/yyyy_hh:mm:ss");
+        myPW.println(time.format(new Date(System.currentTimeMillis())));
     }
 
     public void recordMove(String move) {
@@ -43,14 +41,14 @@ public class MyFileWrite {
 
     public void endRecord() {
         myPW.close();
-        String tempString = time.format(new Date()) + ".txt";
-
-        File newFile = new File(tempString);
-        try {
-            Files.move(newFile.toPath(), newFile.toPath());
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+//        String tempString = time.format(new Date()) + ".txt";
+//
+//        File newFile = new File(tempString);
+//        try {
+//            Files.move(newFile.toPath(), newFile.toPath());
+//        } catch (IOException e) {
+//            System.out.println(e);
+//        }
     }
 
 

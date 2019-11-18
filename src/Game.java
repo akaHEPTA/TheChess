@@ -8,7 +8,7 @@ public class Game {
     private Piece[][] myBoard;
     private Display myDisplay;
     private InputCollector myInput;
-    private MyFileWrite myFW;
+//    private MyFileWrite myFW;
 
     private boolean finish = false;
     private boolean isWhiteTurn = true;
@@ -30,11 +30,11 @@ public class Game {
         myBoard = new Piece[8][8];
         myDisplay = new Display();
         myInput = new InputCollector();
-        try {
-            myFW = new MyFileWrite();
-        } catch (IOException e) {
-            myDisplay.printFileWriteError(e);
-        }
+//        try {
+//            myFW = new MyFileWrite();
+//        } catch (IOException e) {
+//            myDisplay.printFileWriteError(e);
+//        }
     }
 
     /**
@@ -110,26 +110,32 @@ public class Game {
                     if (!myBoard[i][j].isWhite) black = myBoard[i][j];
                 }
 
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Piece temp = myBoard[i][j];
-                if (temp != null) {
-                    if (temp.getValidMoveList(myBoard).contains(white.position)) {
-                        if (white.getValidMoveList(myBoard).isEmpty()) {
-                            finish = true;
-                            myFW.endRecord();
-                            myDisplay.printCheckmate();
-                        } else {
-                            myDisplay.printCheck(myBoard[i][j]);
+        if (white == null || black == null) {
+            finish = true;
+//            myFW.endRecord();
+            myDisplay.printGameEnd(isWhiteTurn);
+        } else {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    Piece temp = myBoard[i][j];
+                    if (temp != null) {
+                        if (temp.getValidMoveList(myBoard).contains(white.position)) {
+                            if (white.getValidMoveList(myBoard).isEmpty()) {
+                                finish = true;
+//                                myFW.endRecord();
+                                myDisplay.printCheckmate();
+                            } else {
+                                myDisplay.printCheck(myBoard[i][j]);
+                            }
+                        } else if (temp.getValidMoveList(myBoard).contains(black.position)) {
+                            if (black.getValidMoveList(myBoard).isEmpty()) {
+                                finish = true;
+//                                myFW.endRecord();
+                                myDisplay.printCheckmate();
+                            } else myDisplay.printCheck(myBoard[i][j]);
                         }
-                    } else if (temp.getValidMoveList(myBoard).contains(black.position)) {
-                        if (black.getValidMoveList(myBoard).isEmpty()) {
-                            finish = true;
-                            myFW.endRecord();
-                            myDisplay.printCheckmate();
-                        } else myDisplay.printCheck(myBoard[i][j]);
-                    }
 
+                    }
                 }
             }
         }
@@ -170,7 +176,7 @@ public class Game {
      * finish the game and score the players show the result of this game
      */
     private void switchResign() {
-        myFW.endRecord();
+//        myFW.endRecord();
         finish = true;
         myDisplay.printResign(isWhiteTurn);
     }
@@ -256,7 +262,7 @@ public class Game {
                         }
                         myBoard[newPos.getRow()][newPos.getCol()] = myBoard[pos.getRow()][pos.getCol()];
                         myBoard[pos.getRow()][pos.getCol()] = null;
-                        myFW.recordMove(input);
+//                        myFW.recordMove(input);
                         myDisplay.printMove(pos, newPos);
                         trigger();
                         return true;
@@ -306,7 +312,6 @@ public class Game {
             Piece temp = myBoard[pos.getRow()][pos.getCol()];
             if (temp instanceof Pawn && ((Pawn) temp).setPromotion() && switchMove(input.substring(0, 4))) {
                 myBoard[newPos.getRow()][newPos.getCol()] = createPromotedPiece(input.substring(4, 5), temp.getPosition());
-                /* file writer */
                 trigger();
             }
         } else myDisplay.printPatternUnmatch();
