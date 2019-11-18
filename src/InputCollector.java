@@ -33,18 +33,4 @@ public class InputCollector {
         return result;
     }
 
-    //  public int getInt() {
-    //    int result;
-    //    while (true) {
-    //      try {
-    //        result = myScan.nextInt();
-    //        System.out.println(myScan.hasNext());
-    //        break;
-    //      } catch (Exception e) {
-    //        System.out.println("[!] Invalid value : " + e.getMessage());
-    //        myScan = new Scanner(System.in);
-    //      }
-    //    }
-    //    return result;
-    //  }
 }

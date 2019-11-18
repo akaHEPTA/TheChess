@@ -172,18 +172,3 @@ public class Display {
 
 
 }
-
-/*
-private static final char WHITE_KING = '♔';
-private static final char WHITE_QUEEN = '♕';
-private static final char WHITE_ROOK = '♖';
-private static final char WHITE_BISHOP = '♗';
-private static final char WHITE_KNIGHT = '♘';
-private static final char WHITE_PAWN = '♙';
-private static final char BLACK_KING = '♚';
-private static final char BLACK_QUEEN = '♛';
-private static final char BLACK_ROOK = '♜';
-private static final char BLACK_BISHOP = '♝';
-private static final char BLACK_KNIGHT = '♞';
-private static final char BLACK_PAWN = '♟';
- */

@@ -71,11 +71,3 @@ public class Knight extends Piece {
     }
 
 }
-
-/*
-required to implement
-
-- moves like L
-- can pass through the pieces in L (jump)
-
- */

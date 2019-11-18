@@ -35,7 +35,7 @@ public abstract class Piece {
      * @param newPosition is the position that this piece will move
      * @param board       is present board status to check
      */
-    protected boolean move(Position newPosition, Piece[][] board) {
+    protected boolean move(Position newPosition, Piece[][] board, int counter) {
         boolean result = false;
         if (this.isValidMove(newPosition, board)) {
             this.position = newPosition;

@@ -5,16 +5,21 @@ public class Pawn extends Piece {
     private boolean isMoved = false;
     private boolean isJumped = false;
     private boolean isPromoted = false;
+    private int counter = 0;
+
     // Constructor
     public Pawn(String type, boolean isWhite, Position position) {
         super(type, isWhite, position);
     }
 
     @Override
-    protected boolean move(Position newPosition, Piece[][] board) {
+    protected boolean move(Position newPosition, Piece[][] board, int counter) {
         if (isValidMove(newPosition, board)) {
             if (!this.isMoved) this.isMoved = true;
-            if (Math.abs(position.getRow() - newPosition.getRow()) == 2) this.isJumped = true;
+            if (Math.abs(position.getRow() - newPosition.getRow()) == 2) {
+                this.isJumped = true;
+                this.counter = counter;
+            }
             this.position = newPosition;
             return true;
         }
@@ -69,26 +74,18 @@ public class Pawn extends Piece {
         return validPositions;
     }
 
-    public boolean setPromotion(){
+    public boolean setPromotion() {
         this.isPromoted = true;
         return true;
     }
 
-    public boolean getPromotion(){
+    public void setJumped(int c) {
+        if (this.counter + 1 == c)
+            this.isJumped = false;
+    }
+
+    public boolean getPromotion() {
         return this.isPromoted;
     }
-//    public void setIsFirstMoveTwo(int isFirstMoveTwo) {
-//        this.isFirstMoveTwo = isFirstMoveTwo;
-//    }
 
 }
-
-/*
-required to implement
-
-- moves only one step forward
-- captures only a front diagonal step
-- gets promotion when it reached at the end (special rule)
-- En passant capture (special rule)
-
- */

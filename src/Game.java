@@ -41,14 +41,14 @@ public class Game {
      * Create all the pieces on the board
      */
     private void createPieces() {
-//        myBoard[0][0] = new Rook("Rook", false, new Position(0, 0));
-//        myBoard[0][1] = new Knight("Knight", false, new Position(0, 1));
-//        myBoard[0][2] = new Bishop("Bishop", false, new Position(0, 2));
-//        myBoard[0][3] = new Queen("Queen", false, new Position(0, 3));
+        myBoard[0][0] = new Rook("Rook", false, new Position(0, 0));
+        myBoard[0][1] = new Knight("Knight", false, new Position(0, 1));
+        myBoard[0][2] = new Bishop("Bishop", false, new Position(0, 2));
+        myBoard[0][3] = new Queen("Queen", false, new Position(0, 3));
         myBoard[0][4] = new King("King", false, new Position(0, 4));
-//        myBoard[0][5] = new Bishop("Bishop", false, new Position(0, 5));
-//        myBoard[0][6] = new Knight("Knight", false, new Position(0, 6));
-//        myBoard[0][7] = new Rook("Rook", false, new Position(0, 7));
+        myBoard[0][5] = new Bishop("Bishop", false, new Position(0, 5));
+        myBoard[0][6] = new Knight("Knight", false, new Position(0, 6));
+        myBoard[0][7] = new Rook("Rook", false, new Position(0, 7));
 
         myBoard[7][0] = new Rook("Rook", true, new Position(7, 0));
         myBoard[7][1] = new Knight("Knight", true, new Position(7, 1));
@@ -63,10 +63,6 @@ public class Game {
             myBoard[1][i] = new Pawn("Pawn", false, new Position(1, i));
             myBoard[6][i] = new Pawn("Pawn", true, new Position(6, i));
         }
-
-        /* TEST CODE */
-
-//        myBoard[3][7] = new Pawn("Pawn", true, new Position(3, 7));
     }
 
     /**
@@ -98,9 +94,7 @@ public class Game {
                 default:
                     switchUCI(input);
             }
-            if (check()) {
-
-            }
+            check();
             myDisplay.printNewLine();
         }
     }
@@ -207,7 +201,7 @@ public class Game {
                 else switchPromotion(input);
                 break;
             default:
-                /* show invalid command message and finish the cycle to get it again */
+                myDisplay.printPatternUnmatch();
         }
     }
 
@@ -223,13 +217,13 @@ public class Game {
                     else myDisplay.printMovesFail(2);
                 else myDisplay.printMovesFail(1);
             } else myDisplay.printMovesFail(0);
-            myDisplay.printNewLine();
         } else myDisplay.printPatternUnmatch();
     }
 
     private boolean switchMove(String input) {
         if (patternMatch(input, 1)) {
-            Position pos = convertUCI(input.substring(0, 2)), newPos = convertUCI(input.substring(2, 4));
+            Position pos = convertUCI(input.substring(0, 2));
+            Position newPos = convertUCI(input.substring(2, 4));
             Piece temp = myBoard[pos.getRow()][pos.getCol()];
 
             if (temp != null) { // null check
@@ -240,11 +234,31 @@ public class Game {
                             return false;
                         }
                     }
-                    if (temp.move(newPos, myBoard)) {
+                    if (temp.move(newPos, myBoard, counter)) {
                         if (temp instanceof Pawn) {
                             if (isEnPassant(pos, newPos))
                                 if (temp.isWhite) myBoard[newPos.getRow() + 1][newPos.getCol()] = null;
                                 else myBoard[newPos.getRow() - 1][newPos.getCol()] = null;
+                        } else if (temp instanceof King) {
+                            if (isCastling(pos, newPos)) {
+                                if (newPos.equals(new Position(0, 2))) {
+                                    ((Rook) myBoard[0][0]).setPosition(new Position(0, 3));
+                                    myBoard[0][3] = myBoard[0][0];
+                                    myBoard[0][0] = null;
+                                } else if (newPos.equals(new Position(0, 6))) {
+                                    ((Rook) myBoard[0][0]).setPosition(new Position(0, 5));
+                                    myBoard[0][5] = myBoard[0][7];
+                                    myBoard[0][7] = null;
+                                } else if (newPos.equals(new Position(7, 2))) {
+                                    ((Rook) myBoard[7][0]).setPosition((new Position(7, 3)));
+                                    myBoard[7][3] = myBoard[7][0];
+                                    myBoard[7][0] = null;
+                                } else if (newPos.equals(new Position(7, 6))) {
+                                    ((Rook) myBoard[7][7]).setPosition(new Position(7, 5));
+                                    myBoard[7][5] = myBoard[7][7];
+                                    myBoard[7][7] = null;
+                                }
+                            }
                         }
                         myBoard[newPos.getRow()][newPos.getCol()] = myBoard[pos.getRow()][pos.getCol()];
                         myBoard[pos.getRow()][pos.getCol()] = null;
@@ -261,8 +275,11 @@ public class Game {
 
     private boolean isEnPassant(Position oldPos, Position newPos) {
         int r = Math.abs(oldPos.getRow() - newPos.getRow()), c = Math.abs(oldPos.getCol() - newPos.getCol());
-        if (r == 1 && c == 1) return true;
-        else return false;
+        return r == 1 && c == 1;
+    }
+
+    private boolean isCastling(Position oldPos, Position newPos) {
+        return Math.abs(oldPos.getCol() - newPos.getCol()) > 1;
     }
 
     /**
@@ -295,25 +312,19 @@ public class Game {
             Piece temp = myBoard[pos.getRow()][pos.getCol()];
             if (temp instanceof Pawn && ((Pawn) temp).setPromotion() && switchMove(input.substring(0, 4))) {
                 myBoard[newPos.getRow()][newPos.getCol()] = createPromotedPiece(input.substring(4, 5), temp.getPosition());
+                trigger();
             }
         } else myDisplay.printPatternUnmatch();
     }
 
     /**
      * ASCII code used (a = 97) String -> Position
-     *
-     * <p>TRY-CATCH BLOCK REQUIRED
      */
     private Position convertUCI(String input) {
         int row = 8 - Integer.parseInt(input.substring(1, 2)), col = input.charAt(0) - 97;
         return new Position(row, col);
     }
 
-    /**
-     * ASCII code used (a = 97) Position -> String
-     *
-     * <p>TRY-CATCH BLOCK REQUIRED
-     */
     private String convertUCI(Position position) {
         char row = (char) (8 - position.getRow()), col = (char) (position.getCol() + 97);
         return Character.toString(col) + row;
@@ -354,33 +365,35 @@ public class Game {
                 pattern = Pattern.compile("^[a-h][1-8],[a-h][1-8]$");
                 break;
             case 3:
-                pattern = Pattern.compile("^[a-h][7][a-h][8][bkqr]$");
+                pattern = Pattern.compile("^[a-h][27][a-h][18][bkqr]$");
                 break;
             default:
                 return false;
         }
 
         Matcher matcher = pattern.matcher(input);
-        if (matcher.find()) return true;
-        return false;
+        return matcher.find();
     }
 
     private void trigger() {
+        setPawnData();
         isWhiteTurn = !isWhiteTurn;
         isTurnChanged = true;
         counter++;
     }
 
-
-    private boolean isInRange(Position p) {
-        int row = p.getRow(), col = p.getCol();
-        if (row >= 0 && row < 8 && col >= 0 && col < 8) return true;
-        return false;
+    private void setPawnData() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece temp = myBoard[i][j];
+                if (temp instanceof Pawn)
+                    ((Pawn) temp).setJumped(counter);
+            }
+        }
     }
 
-    protected boolean isInRange(int row, int col) {
-        if (row >= 0 && row < 8 && col >= 0 && col < 8) return true;
-        return false;
+    private boolean isInRange(int row, int col) {
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
 
 }

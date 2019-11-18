@@ -1,9 +1,17 @@
 import java.util.ArrayList;
 
 public class Rook extends Piece {
+    private boolean moved = false;
 
     public Rook(String type, boolean isWhite, Position position) {
         super(type, isWhite, position);
+    }
+
+    @Override
+    protected boolean move(Position newPosition, Piece[][] board, int counter) {
+        boolean result = super.move(newPosition, board, counter);
+        if (result && !moved) moved = true;
+        return result;
     }
 
     /**
@@ -22,7 +30,7 @@ public class Rook extends Piece {
         return validPositions;
     }
 
-    protected ArrayList<Position> getValidWay(Piece[][] board, int rowMove, int colMove) {
+    private ArrayList<Position> getValidWay(Piece[][] board, int rowMove, int colMove) {
         ArrayList<Position> validPositions = new ArrayList<>();
 
         boolean isBlocked = false;
@@ -42,17 +50,12 @@ public class Rook extends Piece {
         return validPositions;
     }
 
-    public boolean castling(Piece[][] board) {
-        return false;
+    public boolean getMoved() {
+        return this.moved;
+    }
 
+    public void setPosition(Position newPos) {
+        this.position = newPos;
     }
 
 }
-
-/*
-required to implement
-
-- move horizontally or vertically
-- Castling (Special rule)
-
- */

@@ -43,10 +43,3 @@ public class Bishop extends Piece {
     }
 
 }
-
-/*
-required to implement
-
-- move diagonally
-
- */
