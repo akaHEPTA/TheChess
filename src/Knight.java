@@ -7,17 +7,6 @@ public class Knight extends Piece {
     }
 
     @Override
-    protected boolean move(Position newPosition, Piece[][] board) {
-        boolean result = false;
-        // It should check super's validity (grid range) && Knight's validity
-        if (isValidMove(newPosition, board)) {
-            this.position = newPosition;
-            result = true;
-        }
-        return result;
-    }
-
-    @Override
     public ArrayList<Position> getValidMoveList(Piece[][] board) {
         ArrayList<Position> validPositions = new ArrayList<>();
         int rowPosition = this.position.getRow(), colPosition = this.position.getCol();
@@ -81,10 +70,6 @@ public class Knight extends Piece {
         return validPositions;
     }
 
-    @Override
-    public String toString() {
-        return null;
-    }
 }
 
 /*

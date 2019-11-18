@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Game {
     // Fields
@@ -7,9 +9,11 @@ public class Game {
     private Display myDisplay;
     private InputCollector myInput;
     private MyFileWrite myFW;
+
     private boolean finish = false;
     private boolean isWhiteTurn = true;
     private boolean isTurnChanged = true;
+
     private int counter = 1;
 
     // Constructor
@@ -37,14 +41,14 @@ public class Game {
      * Create all the pieces on the board
      */
     private void createPieces() {
-        myBoard[0][0] = new Rook("Rook", false, new Position(0, 0));
-        myBoard[0][1] = new Knight("Knight", false, new Position(0, 1));
-        myBoard[0][2] = new Bishop("Bishop", false, new Position(0, 2));
-        myBoard[0][3] = new Queen("Queen", false, new Position(0, 3));
+//        myBoard[0][0] = new Rook("Rook", false, new Position(0, 0));
+//        myBoard[0][1] = new Knight("Knight", false, new Position(0, 1));
+//        myBoard[0][2] = new Bishop("Bishop", false, new Position(0, 2));
+//        myBoard[0][3] = new Queen("Queen", false, new Position(0, 3));
         myBoard[0][4] = new King("King", false, new Position(0, 4));
-        myBoard[0][5] = new Bishop("Bishop", false, new Position(0, 5));
-        myBoard[0][6] = new Knight("Knight", false, new Position(0, 6));
-        myBoard[0][7] = new Rook("Rook", false, new Position(0, 7));
+//        myBoard[0][5] = new Bishop("Bishop", false, new Position(0, 5));
+//        myBoard[0][6] = new Knight("Knight", false, new Position(0, 6));
+//        myBoard[0][7] = new Rook("Rook", false, new Position(0, 7));
 
         myBoard[7][0] = new Rook("Rook", true, new Position(7, 0));
         myBoard[7][1] = new Knight("Knight", true, new Position(7, 1));
@@ -59,7 +63,10 @@ public class Game {
             myBoard[1][i] = new Pawn("Pawn", false, new Position(1, i));
             myBoard[6][i] = new Pawn("Pawn", true, new Position(6, i));
         }
+
         /* TEST CODE */
+
+//        myBoard[3][7] = new Pawn("Pawn", true, new Position(3, 7));
     }
 
     /**
@@ -71,7 +78,6 @@ public class Game {
                 myDisplay.printBoard(myBoard);
                 isTurnChanged = false;
             }
-            System.out.println("Current counter:" + counter);
             myDisplay.printTurn(isWhiteTurn);
 
             String input = myInput.getLine().toLowerCase();
@@ -92,7 +98,47 @@ public class Game {
                 default:
                     switchUCI(input);
             }
+            if (check()) {
+
+            }
+            myDisplay.printNewLine();
         }
+    }
+
+    private boolean check() {
+        Piece white = null;
+        Piece black = null;
+
+        for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 8; j++)
+                if (myBoard[i][j] instanceof King) {
+                    if (myBoard[i][j].isWhite) white = myBoard[i][j];
+                    if (!myBoard[i][j].isWhite) black = myBoard[i][j];
+                }
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece temp = myBoard[i][j];
+                if (temp != null) {
+                    if (temp.getValidMoveList(myBoard).contains(white.position)) {
+                        if (white.getValidMoveList(myBoard).isEmpty()) {
+                            finish = true;
+                            myDisplay.printCheckmate();
+                        } else {
+                            myDisplay.printCheck();
+                            System.out.println(myBoard[i][j]);
+                        }
+                    } else if (temp.getValidMoveList(myBoard).contains(black.position)) {
+                        if (black.getValidMoveList(myBoard).isEmpty()) {
+                            finish = true;
+                            myDisplay.printCheckmate();
+                        } else myDisplay.printCheck();
+                    }
+
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -114,13 +160,14 @@ public class Game {
      */
     private void switchMoves() {
         for (int i = 0; i < 8; i++)
-            for (int j = 0; j < 8; j++)
+            for (int j = 0; j < 8; j++) {
+                //Piece piece
                 if (myBoard[i][j] != null && myBoard[i][j].isWhite == isWhiteTurn) {
-                    ArrayList moves = myBoard[i][j].getValidMoveList(myBoard);
+                    ArrayList<Position> moves = myBoard[i][j].getValidMoveList(myBoard);
                     if (!moves.isEmpty())
-                        myDisplay.printMoves(
-                                myBoard[i][j].getType() + ", " + convertUCI(new Position(i, j)), moves);
+                        myDisplay.printMoves(myBoard[i][j], moves);
                 }
+            }
         myDisplay.printNewLine();
     }
 
@@ -146,49 +193,8 @@ public class Game {
      * @param input is command of player (String)
      */
     private void switchUCI(String input) {
-    /* not finished
-
-    0. Valid check of the input
-
-    1-1. If it's correct UCI command
-        -> Interpret UCI command to Piece & Position
-
-    1-2. If it's incorrect UCI command
-        -> Show the message and just finish this cycle
-        -> "BUT DO NOT TRIGGER TO CHANGE PLAYER"
-        -> This same player will input command again
-
-    2. (after 1-1) Call move method of the selected Piece
-        -> move() method return true after the moving if the position is available
-        -> If the position is unavailable, it doesn't move and just return false
-
-    3-1. If it's moved (correct Position case)
-        -> Trigger to next turn
-        -> isWhiteTurn = !isWhiteTurn
-        -> isTurnChanged = True
-
-        ------> Extra challenge feature:
-        If you want to save the play log as a text file, make another class that controls file write
-        In this step(correctly moved) you can take a String to save...
-
-    3-2. If it doesn't moved (incorrect Position case)
-        -> Show the message and just finish this cycle
-        -> "BUT DO NOT TRIGGER TO CHANGE PLAYER"
-        -> This same player will input command again
-
-    ----------
-
-    check length >
-    if it's 2 -> show the whole possible move list
-            4 -> try move
-            5 -> move + special order (promotion)
-
-    else: throw away
-    */
-
         // remove all whitespaces from the input
         input = input.replace(" ", "");
-
         switch (input.length()) {
             case 2:
                 switchGetMoveList(input);
@@ -203,134 +209,94 @@ public class Game {
             default:
                 /* show invalid command message and finish the cycle to get it again */
         }
-
     }
 
     private void switchGetMoveList(String input) {
-        Position piece = convertUCI(input);
-        int row = piece.getRow(), col = piece.getCol();
-        if (isInRange(row, col)) // board range check
-            if (myBoard[row][col] != null) // null check
-                if (myBoard[row][col].isWhite == isWhiteTurn) // color check
-                    if (!(myBoard[piece.getRow()][piece.getCol()] instanceof Pawn)) {
-                        // not Pawn
-                        myDisplay.printMoves(input, myBoard[row][col].getValidMoveList(myBoard));
-                    } else {
-                        // Pawn
-                        Pawn p = (Pawn) myBoard[row][col];
-                        myDisplay.printMoves(input, p.getValidMoveList(myBoard, counter));
-                    }
-                else myDisplay.printMovesFail(2);
-            else myDisplay.printMovesFail(1);
-        else myDisplay.printMovesFail(0);
-        myDisplay.printNewLine();
+        if (patternMatch(input, 0)) {
+            Position piece = convertUCI(input);
+            int row = piece.getRow(), col = piece.getCol();
+            if (isInRange(row, col)) { // board range check
+                Piece temp = myBoard[row][col];
+                if (temp != null) // null check
+                    if (temp.isWhite == isWhiteTurn) // color check
+                        myDisplay.printMoves(temp, myBoard[row][col].getValidMoveList(myBoard));
+                    else myDisplay.printMovesFail(2);
+                else myDisplay.printMovesFail(1);
+            } else myDisplay.printMovesFail(0);
+            myDisplay.printNewLine();
+        } else myDisplay.printPatternUnmatch();
     }
 
+    private boolean switchMove(String input) {
+        if (patternMatch(input, 1)) {
+            Position pos = convertUCI(input.substring(0, 2)), newPos = convertUCI(input.substring(2, 4));
+            Piece temp = myBoard[pos.getRow()][pos.getCol()];
 
-    private void switchMove(String input) {
-        boolean moveOK = false;
-        int code = -1;
-        Position pos = convertUCI(input.substring(0, 2)), newPos = convertUCI(input.substring(2, 4));
-
-        if (isInRange(pos) && isInRange(newPos)) { // board range check
-            if (myBoard[pos.getRow()][pos.getCol()] != null) { // null check
-                if (myBoard[pos.getRow()][pos.getCol()].isWhite == isWhiteTurn) { // color check
-                    if (!(myBoard[pos.getRow()][pos.getCol()] instanceof Pawn)) {
-                        // not Pawn
-                        moveOK = myBoard[pos.getRow()][pos.getCol()].move(newPos, myBoard);
-                    } else {
-                        // Pawn
-                        Pawn p = (Pawn) myBoard[pos.getRow()][pos.getCol()];
-                        moveOK = p.move(newPos, myBoard, counter);
-                    }
-
-                    if (moveOK) {
-                        // Check if the Pawn moves two at the first time.
-                        if (isFirstMoveTwo(myBoard[pos.getRow()][pos.getCol()], pos, newPos)) {
-                            Pawn p = (Pawn) (myBoard[pos.getRow()][pos.getCol()]);
-                            p.setIsFirstMoveTwo(counter);
-                            System.out.println(counter);
+            if (temp != null) { // null check
+                if (temp.isWhite == isWhiteTurn) { // color check
+                    if (temp instanceof Pawn && (newPos.getRow() == 0 || newPos.getRow() == 7)) {
+                        if (!((Pawn) temp).getPromotion()) {
+                            myDisplay.printPromotionRequired();
+                            return false;
                         }
-
-                        // Check if tha Pawn do en passant
-                        if (isEnPassant(myBoard[pos.getRow()][pos.getCol()], pos, newPos)) {
-                            System.out.println("Wow, En passant!");
-                            // left side
-                            //   capture opponent piece
-                            if (pos.getCol() - newPos.getCol() == 1) {
-                                myBoard[pos.getRow()][pos.getCol() - 1] = null;
-                            }
-                            // right side
-                            //   capture opponent piece
-                            if (newPos.getCol() - pos.getCol() == 1) {
-                                myBoard[pos.getRow()][pos.getCol() + 1] = null;
-                            }
+                    }
+                    if (temp.move(newPos, myBoard)) {
+                        if (temp instanceof Pawn) {
+                            if (isEnPassant(pos, newPos))
+                                if (temp.isWhite) myBoard[newPos.getRow() + 1][newPos.getCol()] = null;
+                                else myBoard[newPos.getRow() - 1][newPos.getCol()] = null;
                         }
                         myBoard[newPos.getRow()][newPos.getCol()] = myBoard[pos.getRow()][pos.getCol()];
                         myBoard[pos.getRow()][pos.getCol()] = null;
                         myFW.recordMove(input);
+                        myDisplay.printMove(pos, newPos);
                         trigger();
-                    }
-                } else code = 2; // team not matched
-            } else code = 1; // piece is not exist (null)
-        } else code = 0; // out of board range
-
-        myDisplay.printUCI(moveOK, code);
+                        return true;
+                    } else myDisplay.printMoveFail(0);
+                } else myDisplay.printMoveFail(2); // team not matched
+            } else myDisplay.printMoveFail(1); // piece is not exist (null)
+        } else myDisplay.printPatternUnmatch();
+        return false;
     }
 
+    private boolean isEnPassant(Position oldPos, Position newPos) {
+        int r = Math.abs(oldPos.getRow() - newPos.getRow()), c = Math.abs(oldPos.getCol() - newPos.getCol());
+        if (r == 1 && c == 1) return true;
+        else return false;
+    }
 
     /**
      * List all of the valid moves in the square
      */
     private void switchSquare(String input) {
-        boolean printed = false;
-        Position p1 = convertUCI(input.substring(0, 2)), p2 = convertUCI(input.substring(3, 5));
-        int minRow = Math.min(p1.getRow(), p2.getRow()), maxRow = Math.max(p1.getRow(), p2.getRow()),
-                minCol = Math.min(p1.getCol(), p2.getCol()), maxCol = Math.max(p1.getCol(), p2.getCol());
-        if (isInRange(p1) && isInRange(p2)) // board range check
+        if (patternMatch(input, 2)) {
+            boolean printed = false;
+            Position p1 = convertUCI(input.substring(0, 2)), p2 = convertUCI(input.substring(3, 5));
+            int minRow = Math.min(p1.getRow(), p2.getRow()), maxRow = Math.max(p1.getRow(), p2.getRow()),
+                    minCol = Math.min(p1.getCol(), p2.getCol()), maxCol = Math.max(p1.getCol(), p2.getCol());
             for (int i = maxRow; i >= minRow; i--)
                 for (int j = minCol; j <= maxCol; j++) {
                     Piece p = myBoard[i][j];
                     if (p != null) // null check
                         if (p.isWhite == isWhiteTurn) { // color check
-                            ArrayList moves = p.getValidMoveList(myBoard);
+                            ArrayList<Position> moves = p.getValidMoveList(myBoard);
                             if (!moves.isEmpty())
-                                myDisplay.printMoves(p.getType() + ", " + convertUCI(p.getPosition()), moves);
+                                myDisplay.printMoves(p, moves);
                             if (!printed) printed = true;
                         }
                 }
-        else myDisplay.printMovesFail(0);
-        myDisplay.printNewLine();
+            myDisplay.printNewLine();
+        } else myDisplay.printPatternUnmatch();
     }
 
     private void switchPromotion(String input) {
-    /*
-    THIS METHOD REQUIRES PAWN'S PROMOTION CODE FIRST
-    WORK ON IT LATER WHEN THE PROMOTION IS COMPLETED
-
-    1. check validity (piece + new position + promotion)
-    2-1: true -> call the piece's move method and promotion
-    */
-        Position piece3 = convertUCI(input.substring(0, 2));
-        Position newPosition2 = convertUCI(input.substring(2, 4));
-        Piece selectedPiece = myBoard[piece3.getRow()][piece3.getCol()];
-        boolean moveOk2 = selectedPiece.move(newPosition2, myBoard);
-        boolean promoteOk = false;
-        if (selectedPiece instanceof Pawn) {
-            Pawn p = (Pawn) selectedPiece;
-            promoteOk = p.promote(newPosition2, myBoard);
-
-            if (moveOk2 && promoteOk) {
-                Piece promotedPiece =
-                        createPromotedPiece(input.substring(4, 5), selectedPiece.isWhite, newPosition2);
-                movePiece(promotedPiece, piece3, newPosition2);
-                // myFW.recordMove(input);
-                isWhiteTurn = !isWhiteTurn;
-                isTurnChanged = true;
-                counter++;
+        if (patternMatch(input, 3)) {
+            Position pos = convertUCI(input.substring(0, 2)), newPos = convertUCI(input.substring(2, 4));
+            Piece temp = myBoard[pos.getRow()][pos.getCol()];
+            if (temp instanceof Pawn && ((Pawn) temp).setPromotion() && switchMove(input.substring(0, 4))) {
+                myBoard[newPos.getRow()][newPos.getCol()] = createPromotedPiece(input.substring(4, 5), temp.getPosition());
             }
-            // myDisplay.printUCI(moveOk2 && promoteOk);
-        }
+        } else myDisplay.printPatternUnmatch();
     }
 
     /**
@@ -353,54 +319,58 @@ public class Game {
         return Character.toString(col) + row;
     }
 
-    private void movePiece(Piece pieceToMove, Position src, Position dest) {
-        myBoard[dest.getRow()][dest.getCol()] = pieceToMove;
-        myBoard[src.getRow()][src.getCol()] = null;
-    }
-
-    private boolean isFirstMoveTwo(Piece pieceToMove, Position src, Position dest) {
-        if (!(pieceToMove instanceof Pawn)) return false;
-        if (pieceToMove.isWhite) {
-            return src.getRow() == 6 && dest.getRow() == 4;
-        } else {
-            return src.getRow() == 1 && dest.getRow() == 3;
-        }
-    }
-
-    private boolean isEnPassant(Piece pieceToMove, Position src, Position dest) {
-        if (!(pieceToMove instanceof Pawn)) return false;
-        return myBoard[dest.getRow()][dest.getCol()] == null
-                && Math.abs(src.getRow() - dest.getRow()) == 1
-                && Math.abs(src.getCol() - dest.getCol()) == 1;
-    }
-
-    private Piece createPromotedPiece(String input, boolean isWhite, Position dest) {
+    private Piece createPromotedPiece(String input, Position dest) {
         Piece promotedPiece;
         switch (input) {
-            case "q":
-                promotedPiece = new Queen("Queen", isWhite, new Position(dest.getRow(), dest.getCol()));
+            case "b":
+                promotedPiece = new Bishop("Bishop", isWhiteTurn, dest);
                 break;
             case "k":
-                promotedPiece = new Knight("Knight", isWhite, new Position(dest.getRow(), dest.getCol()));
+                promotedPiece = new Knight("Knight", isWhiteTurn, dest);
+                break;
+            case "q":
+                promotedPiece = new Queen("Queen", isWhiteTurn, dest);
                 break;
             case "r":
-                promotedPiece = new Rook("Rook", isWhite, new Position(dest.getRow(), dest.getCol()));
-                break;
-            case "b":
-                promotedPiece = new Bishop("Bishop", isWhite, new Position(dest.getRow(), dest.getCol()));
+                promotedPiece = new Rook("Rook", isWhiteTurn, dest);
                 break;
             default:
                 promotedPiece = null;
         }
-
         return promotedPiece;
     }
 
+    private boolean patternMatch(String input, int code) {
+        Pattern pattern;
+
+        switch (code) {
+            case 0:
+                pattern = Pattern.compile("^[a-h][1-8]$");
+                break;
+            case 1:
+                pattern = Pattern.compile("^[a-h][1-8][a-h][1-8]$");
+                break;
+            case 2:
+                pattern = Pattern.compile("^[a-h][1-8],[a-h][1-8]$");
+                break;
+            case 3:
+                pattern = Pattern.compile("^[a-h][7][a-h][8][bkqr]$");
+                break;
+            default:
+                return false;
+        }
+
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.find()) return true;
+        return false;
+    }
 
     private void trigger() {
         isWhiteTurn = !isWhiteTurn;
         isTurnChanged = true;
+        counter++;
     }
+
 
     private boolean isInRange(Position p) {
         int row = p.getRow(), col = p.getCol();
@@ -415,16 +385,3 @@ public class Game {
 
 }
 
-/*
-00 01 02 03 04 05 06 07  0  8
-10 11 12 13 14 15 16 17  1  7
-20 21 22 23 24 25 26 27  2  6
-30 31 32 33 34 35 36 37  3  5
-40 41 42 43 44 45 46 47  4  4
-50 51 52 53 54 55 56 57  5  3
-60 61 62 63 64 65 66 67  6  2
-70 71 72 73 74 75 76 77  7  1
-
-0  1  2  3  4  5  6  7
-a  b  c  d  e  f  g  h
-*/

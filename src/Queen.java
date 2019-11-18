@@ -7,24 +7,6 @@ public class Queen extends Piece {
     }
 
     /**
-     * @param newPosition is the position that this piece will move
-     * @param board       is present board data
-     * @return is boolean type value that move command works or not
-     */
-    @Override
-    protected boolean move(Position newPosition, Piece[][] board) {
-        boolean result = false;
-
-        // It should check super's validity (grid range) && Queen's validity
-        if (isValidMove(newPosition, board)) {
-            this.position = newPosition;
-            result = true;
-        }
-
-        return result;
-    }
-
-    /**
      * @param board is present board data
      * @return is ArrayList that contains valid moves
      */
@@ -46,7 +28,6 @@ public class Queen extends Piece {
 
     protected ArrayList<Position> getValidWay(Piece[][] board, int rowMove, int colMove) {
         ArrayList<Position> validPositions = new ArrayList<>();
-
         boolean isBlocked = false;
 
         for (int i = 1; i < 8; i++) {
@@ -62,11 +43,6 @@ public class Queen extends Piece {
         }
 
         return validPositions;
-    }
-
-    @Override
-    public String toString() {
-        return null;
     }
 
 }

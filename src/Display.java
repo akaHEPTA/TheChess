@@ -104,7 +104,6 @@ public class Display {
         System.out.println("* type 'moves' to list all possible moves");
         System.out.println("* type a square (e.g. b1, e2) to list possible moves for that square");
         System.out.println("* type UCI (e.g. b1c3, e7e8q) to make a move");
-        printNewLine();
     }
 
     public void printResign(boolean isWhiteTurn) {
@@ -112,8 +111,11 @@ public class Display {
         System.out.println((isWhiteTurn ? "White" : "Black") + " resigned. Game over.");
     }
 
-    public void printMoves(String piece, ArrayList<Position> Positions) {
-        System.out.println(piece + " : " + Positions);
+    public void printMoves(Piece piece, ArrayList<Position> Positions) {
+        if (Positions.isEmpty())
+            System.out.println(piece + " : has no position available to move");
+        else
+            System.out.println(piece + " : " + Positions);
     }
 
     public void printMovesFail(int code) {
@@ -131,26 +133,37 @@ public class Display {
         }
     }
 
-    public void printUCI(boolean moveOK, int code) {
-        if (moveOK)
-            System.out.println("OK");
-        else {
-            System.out.print("[!] Invalid Move");
-            switch (code) {
-                case 0:
-                    System.out.println(" : Out of board range");
-                    break;
-                case 1:
-                    System.out.println(" : There is no piece");
-                    break;
-                case 2:
-                    System.out.println(" : The piece is not your team");
-                    break;
-                default:
-                    System.out.println();
-            }
+    public void printMove(Position oldPos, Position newPos) {
+        System.out.println(oldPos + " -> " + newPos + " : OK");
+    }
+
+    public void printMoveFail(int code) {
+        System.out.print("[!] Invalid Move");
+        switch (code) {
+            case 1:
+                System.out.println(" : There is no piece");
+                break;
+            case 2:
+                System.out.println(" : The piece is not your team");
+                break;
         }
-        printNewLine();
+    }
+
+    public void printPromotionRequired() {
+        System.out.println("[!] Promotion command required (e.g. e7e8q)");
+    }
+
+    public void printPatternUnmatch() {
+        System.out.println("[!] Invalid Value");
+    }
+
+
+    public void printCheck() {
+        System.out.println("\n[!] Check : Move the King");
+    }
+
+    public void printCheckmate() {
+        System.out.println("[!] Checkmate : Game Over");
     }
 
     public void printNewLine() {

@@ -35,7 +35,14 @@ public abstract class Piece {
      * @param newPosition is the position that this piece will move
      * @param board       is present board status to check
      */
-    protected abstract boolean move(Position newPosition, Piece[][] board);
+    protected boolean move(Position newPosition, Piece[][] board) {
+        boolean result = false;
+        if (this.isValidMove(newPosition, board)) {
+            this.position = newPosition;
+            result = true;
+        }
+        return result;
+    }
 
     /**
      * check the destination point is available to move
@@ -47,8 +54,7 @@ public abstract class Piece {
     protected boolean isValidMove(Position newPosition, Piece[][] board) {
         boolean result = false;
         ArrayList<Position> validMoveList = getValidMoveList(board);
-        for (Position position : validMoveList)
-            if (position.equals(newPosition)) result = true;
+        for (Position position : validMoveList) if (position.equals(newPosition)) result = true;
         return result;
     }
 
@@ -65,7 +71,9 @@ public abstract class Piece {
     }
 
     @Override
-    public abstract String toString();
+    public String toString() {
+        return this.position + ", " + this.type;
+    }
 
     // Accessor
 

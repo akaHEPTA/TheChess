@@ -1,165 +1,86 @@
 import java.util.ArrayList;
 
 public class Pawn extends Piece {
-
-  // = 0 -> false
-  // > 0 -> true and the count that two move occurred.
-  private int isFirstMoveTwo = 0;
-
-  // Constructor
-  public Pawn(String type, boolean isWhite, Position position) {
-    super(type, isWhite, position);
-  }
-
-  // For Pawn
-  protected boolean move(Position newPosition, Piece[][] board, int currentCount) {
-    boolean result = false;
-
-    // It should check super's validity (grid range) && Queen's validity
-    if (isValidMove(newPosition, board, currentCount)) {
-      this.position = newPosition;
-      result = true;
+    // Field
+    private boolean isMoved = false;
+    private boolean isJumped = false;
+    private boolean isPromoted = false;
+    // Constructor
+    public Pawn(String type, boolean isWhite, Position position) {
+        super(type, isWhite, position);
     }
-    return result;
-  }
 
-  // For Pawn
-  protected boolean isValidMove(Position newPosition, Piece[][] board, int currentCounter) {
-    boolean result = false;
-    ArrayList<Position> validMoveList = getValidMoveList(board, currentCounter);
-    for (Position position : validMoveList) if (position.equals(newPosition)) result = true;
-    return result;
-  }
-
-  @Override
-  protected boolean move(Position newPosition, Piece[][] board) {
-    return true;
-  }
-
-  @Override
-  public ArrayList<Position> getValidMoveList(Piece[][] board) {
-    return new ArrayList<>();
-  }
-
-  public ArrayList<Position> getValidMoveList(Piece[][] board, int currentCounter) {
-    ArrayList<Position> validPositions = new ArrayList<>();
-    int rowPosition = this.position.getRow(), colPosition = this.position.getCol();
-
-    // find out i that abs(rowPositon - i) equals to 1. (0 <= i <= 7)
-    // col, row is converted.
-    //   0 <= row <= 7
-    //   0 <= col <= 7
-
-    if (isWhite) {
-      for (int i = 0; i <= 7; i++) {
-        if (rowPosition - i == 1) {
-
-          // forward 1 move
-          if (board[i][colPosition] == null) validPositions.add(new Position(i, colPosition));
-
-          // forward 2 moves
-          // If this is a first move, add more one position.
-          if (rowPosition == 6)
-            if (board[i][colPosition] == null && board[i - 1][colPosition] == null)
-              validPositions.add(new Position(i - 1, colPosition));
-
-          // If opponent piece exists to diagonal direction.
-          if (colPosition + 1 <= 7
-              && board[i][colPosition + 1] != null
-              && board[i][colPosition + 1].isWhite != isWhite)
-            validPositions.add(new Position(i, colPosition + 1));
-          if (colPosition - 1 >= 0
-              && board[i][colPosition - 1] != null
-              && board[i][colPosition - 1].isWhite != isWhite)
-            validPositions.add(new Position(i, colPosition - 1));
-
-          // Check if En Pssant: right piece
-          if (colPosition < 7) {
-            if (board[rowPosition][colPosition + 1] != null) {
-              if (canEnPssant(board[rowPosition][colPosition + 1], currentCounter))
-                validPositions.add(new Position(i, colPosition + 1));
-            }
-          }
-
-          // Check if En Pssant: left piece
-          if (colPosition > 0) {
-            if (board[rowPosition][colPosition - 1] != null) {
-              if (canEnPssant(board[rowPosition][colPosition - 1], currentCounter))
-                validPositions.add(new Position(i, colPosition - 1));
-            }
-          }
+    @Override
+    protected boolean move(Position newPosition, Piece[][] board) {
+        if (isValidMove(newPosition, board)) {
+            if (!this.isMoved) this.isMoved = true;
+            if (Math.abs(position.getRow() - newPosition.getRow()) == 2) this.isJumped = true;
+            this.position = newPosition;
+            return true;
         }
-      }
-    } else {
-      for (int i = 0; i <= 7; i++) {
-        if (rowPosition - i == -1) {
+        return false;
+    }
 
-          // forward 1 move
-          if (board[i][colPosition] == null) validPositions.add(new Position(i, colPosition));
+    @Override
+    public ArrayList<Position> getValidMoveList(Piece[][] board) {
+        ArrayList<Position> validPositions = new ArrayList<>();
+        int row = this.position.getRow(), col = this.position.getCol(), i;
 
-          // forward 2 moves
-          // If this is a first move, add more one position.
-          if (rowPosition == 1)
-            if (board[i][colPosition] == null && board[i + 1][colPosition] == null)
-              validPositions.add(new Position(i + 1, colPosition));
+        if (this.isWhite) i = -1;
+        else i = 1;
 
-          // If opponent piece exists to diagonal direction.
-          if (colPosition + 1 <= 7
-              && board[i][colPosition + 1] != null
-              && board[i][colPosition + 1].isWhite != isWhite)
-            validPositions.add(new Position(i, colPosition + 1));
-          if (colPosition - 1 >= 0
-              && board[i][colPosition - 1] != null
-              && board[i][colPosition - 1].isWhite != isWhite)
-            validPositions.add(new Position(i, colPosition - 1));
+        // normal 1 step
+        if (isInRange(row + i, col) && board[row + i][col] == null)
+            validPositions.add(new Position(row + i, col));
 
-          // right piece
-          if (colPosition < 7) {
-            if (board[rowPosition][colPosition + 1] != null) {
-              if (canEnPssant(board[rowPosition][colPosition + 1], currentCounter))
-                validPositions.add(new Position(i, colPosition + 1));
+
+        // first 2 step
+        if (!isMoved && board[row + i][col] == null && board[row + i * 2][col] == null)
+            validPositions.add(new Position(row + i * 2, col));
+
+        if (isInRange(row + i, col + i)) {
+            // diagonal left
+            if (board[row + i][col + i] != null && board[row + i][col + i].isWhite != this.isWhite) {
+                validPositions.add(new Position(row + i, col + i));
             }
-          }
-
-          // left piece
-          if (colPosition > 0) {
-            if (board[rowPosition][colPosition - 1] != null) {
-              if (canEnPssant(board[rowPosition][colPosition - 1], currentCounter))
-                validPositions.add(new Position(i, colPosition - 1));
+            // En Passant - left
+            if (board[row][col + i] != null
+                    && board[row][col + i].getType() == "Pawn"
+                    && board[row][col + i].isWhite != this.isWhite
+                    && ((Pawn) board[row][col + i]).isJumped) {
+                validPositions.add(new Position(row + i, col + i));
             }
-          }
         }
-      }
+
+        if (isInRange(row + i, col - i)) {
+            // diagonal right
+            if (board[row + i][col - i] != null && board[row + i][col - i].isWhite != this.isWhite) {
+                validPositions.add(new Position(row + i, col - i));
+            }
+            // En Passant - right
+            if (board[row][col - i] != null
+                    && board[row][col - i] instanceof Pawn
+                    && board[row][col - i].isWhite != this.isWhite
+                    && ((Pawn) board[row][col - i]).isJumped) {
+                validPositions.add(new Position(row + i, col - i));
+            }
+        }
+
+        return validPositions;
     }
-    return validPositions;
-  }
 
-  public boolean promote(Position newPosition, Piece[][] board) {
-    if (isWhite) {
-      return newPosition.getRow() == 0;
-    } else {
-      return newPosition.getRow() == 7;
+    public boolean setPromotion(){
+        this.isPromoted = true;
+        return true;
     }
-  }
 
-  private boolean canEnPssant(Piece p, int currentCounter) {
-    if (!(p instanceof Pawn)) return false;
-    Pawn pp = (Pawn) p;
+    public boolean getPromotion(){
+        return this.isPromoted;
+    }
+//    public void setIsFirstMoveTwo(int isFirstMoveTwo) {
+//        this.isFirstMoveTwo = isFirstMoveTwo;
+//    }
 
-    // Pawn didn't move two.
-    if ((pp.isFirstMoveTwo == 0)) return false;
-
-    return (isWhite != p.isWhite) && (currentCounter - pp.isFirstMoveTwo == 1);
-  }
-
-  public void setIsFirstMoveTwo(int isFirstMoveTwo) {
-    this.isFirstMoveTwo = isFirstMoveTwo;
-  }
-
-  @Override
-  public String toString() {
-    return null;
-  }
 }
 
 /*
